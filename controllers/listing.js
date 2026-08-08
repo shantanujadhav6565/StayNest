@@ -1,18 +1,74 @@
 const Listing = require("../models/listing");
 const axios = require("axios");
 
-
 // ================= INDEX =================
+
 module.exports.index = async (req, res) => {
 
-    const allListings = await Listing.find({});
+    const { category } = req.query;
 
-    res.render("listings/index.ejs", { allListings });
+    let allListings;
+
+    // ================= CATEGORY FILTER =================
+
+    if (category) {
+
+        // Filtered listings + RANDOM ORDER
+        allListings = await Listing.aggregate([
+            {
+                $match: {
+                    category: category
+                }
+            },
+            {
+                $sample: {
+                    size: 100
+                }
+            }
+        ]);
+
+    } else {
+
+        // All listings + RANDOM ORDER
+        allListings = await Listing.aggregate([
+            {
+                $sample: {
+                    size: 100
+                }
+            }
+        ]);
+
+    }
+
+    // ================= CATEGORY MESSAGE =================
+
+    let categoryMessage = null;
+
+    if (category && allListings.length === 0) {
+
+        categoryMessage = `No listings found in ${category}.`;
+
+    }
+
+    // ================= RENDER INDEX =================
+
+    res.render("listings/index.ejs", {
+
+        allListings,
+
+        // Search message default
+        searchMessage: null,
+
+        // Category message
+        categoryMessage
+
+    });
 
 };
 
 
 // ================= RENDER NEW FORM =================
+
 module.exports.renderNewForm = (req, res) => {
 
     res.render("listings/new.ejs");
@@ -21,6 +77,7 @@ module.exports.renderNewForm = (req, res) => {
 
 
 // ================= SHOW LISTING =================
+
 module.exports.showListing = async (req, res) => {
 
     const { id } = req.params;
@@ -35,6 +92,8 @@ module.exports.showListing = async (req, res) => {
         .populate("owner");
 
 
+    // ================= LISTING NOT FOUND =================
+
     if (!listing) {
 
         req.flash(
@@ -46,6 +105,8 @@ module.exports.showListing = async (req, res) => {
 
     }
 
+
+    // ================= SHOW PAGE =================
 
     res.render("listings/show.ejs", {
 
@@ -59,21 +120,23 @@ module.exports.showListing = async (req, res) => {
 };
 
 
-
 // ================= CREATE LISTING =================
+
 module.exports.createListing = async (req, res) => {
 
+    // ================= IMAGE =================
 
     let url = req.file.path;
 
     let filename = req.file.filename;
 
 
+    // ================= CREATE LISTING =================
+
     const newListing = new Listing(req.body.listing);
 
 
-
-    // Get coordinates from MapTiler
+    // ================= GET COORDINATES FROM MAPTILER =================
 
     const response = await axios.get(
 
@@ -83,6 +146,8 @@ module.exports.createListing = async (req, res) => {
 
     );
 
+
+    // ================= LOCATION NOT FOUND =================
 
     if (!response.data.features.length) {
 
@@ -96,6 +161,7 @@ module.exports.createListing = async (req, res) => {
     }
 
 
+    // ================= GEOMETRY =================
 
     newListing.geometry = {
 
@@ -107,10 +173,12 @@ module.exports.createListing = async (req, res) => {
     };
 
 
+    // ================= OWNER =================
 
     newListing.owner = req.user._id;
 
 
+    // ================= IMAGE =================
 
     newListing.image = {
 
@@ -121,10 +189,12 @@ module.exports.createListing = async (req, res) => {
     };
 
 
+    // ================= SAVE =================
 
     await newListing.save();
 
 
+    // ================= SUCCESS MESSAGE =================
 
     req.flash(
         "success",
@@ -134,14 +204,12 @@ module.exports.createListing = async (req, res) => {
 
     res.redirect("/listings");
 
-
 };
 
 
-
 // ================= RENDER EDIT FORM =================
-module.exports.renderEditForm = async (req, res) => {
 
+module.exports.renderEditForm = async (req, res) => {
 
     const { id } = req.params;
 
@@ -149,6 +217,7 @@ module.exports.renderEditForm = async (req, res) => {
     const listing = await Listing.findById(id);
 
 
+    // ================= LISTING NOT FOUND =================
 
     if (!listing) {
 
@@ -162,20 +231,21 @@ module.exports.renderEditForm = async (req, res) => {
     }
 
 
+    // ================= EDIT PAGE =================
 
     res.render(
         "listings/edit.ejs",
-        { listing }
+        {
+            listing
+        }
     );
-
 
 };
 
 
-
 // ================= UPDATE LISTING =================
-module.exports.updateListing = async (req, res) => {
 
+module.exports.updateListing = async (req, res) => {
 
     const { id } = req.params;
 
@@ -183,6 +253,7 @@ module.exports.updateListing = async (req, res) => {
     let listing = await Listing.findById(id);
 
 
+    // ================= LISTING NOT FOUND =================
 
     if (!listing) {
 
@@ -196,8 +267,7 @@ module.exports.updateListing = async (req, res) => {
     }
 
 
-
-    // Update fields
+    // ================= UPDATE FIELDS =================
 
     Object.assign(
         listing,
@@ -205,9 +275,7 @@ module.exports.updateListing = async (req, res) => {
     );
 
 
-
-
-    // Update coordinates
+    // ================= UPDATE COORDINATES =================
 
     const response = await axios.get(
 
@@ -218,9 +286,9 @@ module.exports.updateListing = async (req, res) => {
     );
 
 
+    // ================= UPDATE GEOMETRY =================
 
     if (response.data.features.length) {
-
 
         listing.geometry = {
 
@@ -231,16 +299,12 @@ module.exports.updateListing = async (req, res) => {
 
         };
 
-
     }
 
 
-
-
-    // Update image
+    // ================= UPDATE IMAGE =================
 
     if (req.file) {
-
 
         listing.image = {
 
@@ -250,15 +314,15 @@ module.exports.updateListing = async (req, res) => {
 
         };
 
-
     }
 
 
-
+    // ================= SAVE UPDATED LISTING =================
 
     await listing.save();
 
 
+    // ================= SUCCESS MESSAGE =================
 
     req.flash(
         "success",
@@ -266,26 +330,24 @@ module.exports.updateListing = async (req, res) => {
     );
 
 
-
     res.redirect(`/listings/${id}`);
-
 
 };
 
 
-
-
 // ================= DELETE LISTING =================
-module.exports.deleteListing = async (req, res) => {
 
+module.exports.deleteListing = async (req, res) => {
 
     const { id } = req.params;
 
 
+    // ================= DELETE =================
 
     await Listing.findByIdAndDelete(id);
 
 
+    // ================= SUCCESS MESSAGE =================
 
     req.flash(
         "success",
@@ -293,8 +355,6 @@ module.exports.deleteListing = async (req, res) => {
     );
 
 
-
     res.redirect("/listings");
-
 
 };

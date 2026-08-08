@@ -51,15 +51,19 @@ const initDB = async () => {
                             response.data.features[0].geometry.coordinates,
                     };
                 } else {
-                    console.log(`Location not found: ${obj.location}`);
+                    console.log(
+                        `Location not found: ${obj.location}`
+                    );
                 }
             } catch (err) {
-                console.log(`Error while fetching location: ${obj.location}`);
+                console.log(
+                    `Error while fetching location: ${obj.location}`
+                );
             }
 
             listings.push({
                 ...obj,
-                owner: "6a704964d34ab0744ff48d3a", // Replace with your User _id
+                owner: "6a704964d34ab0744ff48d3a",
                 geometry: geometry,
             });
         }
@@ -68,7 +72,7 @@ const initDB = async () => {
 
         console.log("Data was initialized successfully!");
 
-        mongoose.connection.close();
+        await mongoose.connection.close();
     } catch (err) {
         console.log(err);
     }

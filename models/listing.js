@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 const Review = require("./review");
 const Schema = mongoose.Schema;
 
-
 const listingSchema = new Schema({
+
+    // ================= TITLE =================
 
     title: {
         type: String,
@@ -11,11 +12,15 @@ const listingSchema = new Schema({
     },
 
 
+    // ================= DESCRIPTION =================
+
     description: {
         type: String,
         required: true,
     },
 
+
+    // ================= IMAGE =================
 
     image: {
         filename: {
@@ -28,11 +33,15 @@ const listingSchema = new Schema({
     },
 
 
+    // ================= PRICE =================
+
     price: {
         type: Number,
         required: true,
     },
 
+
+    // ================= LOCATION =================
 
     location: {
         type: String,
@@ -40,25 +49,51 @@ const listingSchema = new Schema({
     },
 
 
+    // ================= COUNTRY =================
+
     country: {
         type: String,
         required: true,
     },
-    // map
-    geometry: {
-    type: {
+
+
+    // ================= CATEGORY =================
+
+    category: {
         type: String,
-        enum: ["Point"],
-        required: true,
+        enum: [
+            "Trending",
+            "Rooms",
+            "Iconic Cities",
+            "Mountains",
+            "Castles",
+            "Amazing Pool",
+            "Camping",
+            "Farms",
+            "Arctic"
+        ],
+        default: "Trending",
     },
-    coordinates: {
-        type: [Number],
-        required: true,
-    },
-},
 
 
-    // Reviews reference
+    // ================= MAP =================
+
+    geometry: {
+        type: {
+            type: String,
+            enum: ["Point"],
+            required: true,
+        },
+
+        coordinates: {
+            type: [Number],
+            required: true,
+        },
+    },
+
+
+    // ================= REVIEWS =================
+
     reviews: [
         {
             type: Schema.Types.ObjectId,
@@ -67,7 +102,8 @@ const listingSchema = new Schema({
     ],
 
 
-    // Owner reference
+    // ================= OWNER =================
+
     owner: {
         type: Schema.Types.ObjectId,
         ref: "User",
@@ -76,8 +112,8 @@ const listingSchema = new Schema({
 });
 
 
+// ================= DELETE REVIEWS =================
 
-// Delete all reviews when listing is deleted
 listingSchema.post("findOneAndDelete", async (listing) => {
 
     if (listing) {
@@ -91,8 +127,6 @@ listingSchema.post("findOneAndDelete", async (listing) => {
 });
 
 
-
 const Listing = mongoose.model("Listing", listingSchema);
-
 
 module.exports = Listing;

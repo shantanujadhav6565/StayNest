@@ -18,6 +18,7 @@ body {
     flex: 1;
 }
 
+
 /* ================= NAVBAR ================= */
 
 .navbar {
@@ -36,11 +37,51 @@ body {
     font-weight: 500;
 }
 
+
+/* ================= SEARCH ================= */
+
+.search {
+    display: flex;
+    align-items: center;
+}
+
+.btn-search {
+    background-color: #fe424d;
+    color: #fff;
+    border-radius: 25px;
+    padding: 0 1rem;
+    white-space: nowrap;
+    border: none;
+}
+
+.btn-search:hover {
+    background-color: #fe424d;
+    color: #fff;
+}
+
+.btn-search i {
+    display: inline;
+    margin-right: 0.5rem;
+}
+
+.search-input {
+    border-radius: 25px;
+    padding: 0.5rem 2rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+}
+
+.search-input:focus {
+    border-color: #fe424d;
+    box-shadow: 0 0 0 0.15rem rgba(254, 66, 77, 0.15);
+}
+
+
 /* ================= FOOTER ================= */
 
 .f-info {
     text-align: center;
-    height: 10rem;
+    min-height: 10rem;
     background-color: #ebebeb;
     display: flex;
     flex-wrap: wrap;
@@ -70,6 +111,7 @@ body {
     margin: 0 0.6rem;
 }
 
+
 /* ================= LISTING CARDS ================= */
 
 .listing-card {
@@ -78,12 +120,13 @@ body {
     overflow: hidden;
     margin-bottom: 2rem;
     transition: 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    background-color: #fff;
 }
 
 .listing-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 .card-img-top {
@@ -97,7 +140,7 @@ body {
 }
 
 .card-text {
-    margin-top: .5rem;
+    margin-top: 0.5rem;
 }
 
 .listing-link {
@@ -105,17 +148,19 @@ body {
     color: #222;
 }
 
+
 /* ================= CARD HOVER ================= */
 
 .card-img-overlay {
     opacity: 0;
-    transition: .3s;
+    transition: 0.3s;
 }
 
 .card-img-overlay:hover {
-    opacity: .12;
+    opacity: 0.12;
     background: white;
 }
+
 
 /* ================= SHOW PAGE ================= */
 
@@ -123,7 +168,7 @@ body {
     border: none !important;
     border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .show-img {
@@ -150,20 +195,23 @@ body {
     font-weight: 600;
 }
 
+
 /* ================= BUTTONS ================= */
 
 .btn {
     border-radius: 10px;
-    padding: .55rem 1.3rem;
+    padding: 0.55rem 1.3rem;
     font-weight: 600;
 }
+
 
 /* ================= REVIEW CARDS ================= */
 
 .card {
     border-radius: 14px;
-    box-shadow: 0 5px 15px rgba(0,0,0,.08);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
+
 
 /* ================= FORMS ================= */
 
@@ -171,11 +219,14 @@ form {
     margin-bottom: 2rem;
 }
 
+
 /* ================= FLASH ================= */
 
 .alert {
     margin-top: 1rem;
+    border-radius: 12px;
 }
+
 
 /* ================= MAP ================= */
 
@@ -187,27 +238,328 @@ form {
     border-radius: 16px;
     overflow: hidden;
     border: 1px solid #e5e7eb;
-    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
+
+
+/* ================================================= */
+/* ================= FILTER BAR ==================== */
+/* ================================================= */
+
+.filters-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1rem 2rem;
+    background-color: #fff;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+
+/* ================= FILTERS ================= */
+
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 2.2rem;
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.filters::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* ================= INDIVIDUAL FILTER ================= */
+
+.filter {
+    min-width: 75px;
+    text-align: center;
+    cursor: pointer;
+    color: #555;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    /* Important because filter is now <a> */
+    text-decoration: none;
+}
+
+.filter:hover {
+    opacity: 1;
+    color: #000;
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+
+/* ================= FILTER ICON ================= */
+
+.filter i {
+    display: block;
+    font-size: 1.3rem;
+    margin-bottom: 0.4rem;
+}
+
+
+/* ================= FILTER TEXT ================= */
+
+.filter p {
+    margin: 0;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+
+/* ================= TAX SWITCH ================= */
+
+#tax-toggle {
+    flex-shrink: 0;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 0.7rem 1rem;
+    background-color: #fff;
+    white-space: nowrap;
+}
+
+
+/* ================= TAX FORM ================= */
+
+#tax-toggle .form-check {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+
+/* ================= TAX SWITCH INPUT ================= */
+
+#tax-toggle .form-check-input {
+    cursor: pointer;
+    width: 2.2rem;
+    height: 1.2rem;
+    margin-top: 0;
+}
+
+
+/* ================= ACTIVE TAX SWITCH ================= */
+
+#tax-toggle .form-check-input:checked {
+    background-color: #fe424d;
+    border-color: #fe424d;
+}
+
+
+/* ================= TAX LABEL ================= */
+
+#tax-toggle .form-check-label {
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #444;
+}
+
+
+/* ================= TAX INFO ================= */
+
+.tax-info {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+
+/* ================= LISTING PRICE ================= */
+
+.listing-price {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+
+/* ================= SEARCH MESSAGE ================= */
+
+.search-message {
+    max-width: 700px;
+    margin: 2rem auto;
+}
+
+
+/* ================= CATEGORY MESSAGE ================= */
+
+.category-message {
+    max-width: 700px;
+    margin: 2rem auto;
+}
+
+
+/* ================= LISTING GRID ================= */
+
+.row {
+    margin-top: 1rem;
+}
+
+
+/* ================= CATEGORY FILTER ACTIVE ================= */
+
+.filter.active {
+    opacity: 1;
+    color: #fe424d;
+}
+
+.filter.active i {
+    color: #fe424d;
+}
+
 
 /* ================= RESPONSIVE ================= */
 
 @media (max-width: 768px) {
 
+    /* Navbar */
+
+    .navbar {
+        height: auto;
+        min-height: 5rem;
+    }
+
+
+    /* Show page */
+
     .show-img {
         height: 18rem;
     }
+
+
+    /* Listing cards */
 
     .card-img-top {
         height: 16rem;
     }
 
+
+    /* Show title */
+
     .show-card .card-title {
         font-size: 1.6rem;
     }
+
+
+    /* Map */
 
     #map {
         height: 320px;
         border-radius: 12px;
     }
+
+
+    /* Filter container */
+
+    .filters-container {
+        padding: 0.8rem 1rem;
+        gap: 1rem;
+    }
+
+
+    /* Filters */
+
+    .filters {
+        gap: 1.5rem;
+    }
+
+
+    /* Tax switch */
+
+    #tax-toggle {
+        display: none;
+    }
+
+
+    /* Filter */
+
+    .filter {
+        min-width: 65px;
+    }
+
+    .filter i {
+        font-size: 1.1rem;
+    }
+
+    .filter p {
+        font-size: 0.7rem;
+    }
+
+
+    /* Search */
+
+    .search {
+        margin: 1rem 0;
+        width: 100%;
+    }
+
+    .search form {
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+}
+
+
+/* ================= TABLET ================= */
+
+@media (max-width: 900px) {
+
+    .filters-container {
+        padding: 0.8rem 1rem;
+        gap: 1rem;
+    }
+
+    .filters {
+        gap: 1.5rem;
+    }
+
+    #tax-toggle {
+        padding: 0.6rem 0.8rem;
+    }
+
+    #tax-toggle .form-check-label {
+        font-size: 0.75rem;
+    }
+
+}
+
+
+/* ================= SMALL MOBILE ================= */
+
+@media (max-width: 500px) {
+
+    .filter {
+        min-width: 65px;
+    }
+
+    .filter i {
+        font-size: 1.1rem;
+    }
+
+    .filter p {
+        font-size: 0.7rem;
+    }
+
+    .listing-card {
+        margin-bottom: 1.5rem;
+    }
+
+    .card-img-top {
+        height: 14rem;
+    }
+
+    .search-input {
+        padding: 0.5rem 1rem;
+    }
+
 }

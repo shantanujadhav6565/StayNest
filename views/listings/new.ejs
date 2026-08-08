@@ -5,16 +5,18 @@
 
         <h3 class="mb-4">Create New Listing</h3>
 
-        <form 
-            action="/listings" 
-            method="POST" 
+        <form
+            action="/listings"
+            method="POST"
             enctype="multipart/form-data"
             class="needs-validation"
             novalidate
         >
 
-            <!-- Title -->
+            <!-- ================= TITLE ================= -->
+
             <div class="mb-3">
+
                 <label for="title" class="form-label">
                     Title
                 </label>
@@ -31,11 +33,14 @@
                 <div class="invalid-feedback">
                     Please enter a title.
                 </div>
+
             </div>
 
 
-            <!-- Description -->
+            <!-- ================= DESCRIPTION ================= -->
+
             <div class="mb-3">
+
                 <label for="description" class="form-label">
                     Description
                 </label>
@@ -52,11 +57,14 @@
                 <div class="invalid-feedback">
                     Please enter description.
                 </div>
+
             </div>
 
 
-            <!-- Image -->
+            <!-- ================= IMAGE ================= -->
+
             <div class="mb-3">
+
                 <label for="image" class="form-label">
                     Upload Image
                 </label>
@@ -67,13 +75,18 @@
                     class="form-control"
                     id="image"
                 >
+
             </div>
 
 
+            <!-- ================= PRICE + COUNTRY ================= -->
+
             <div class="row">
 
-                <!-- Price -->
+                <!-- PRICE -->
+
                 <div class="col-md-4 mb-3">
+
                     <label for="price" class="form-label">
                         Price
                     </label>
@@ -84,17 +97,21 @@
                         class="form-control"
                         id="price"
                         placeholder="1200"
+                        min="1"
                         required
                     >
 
                     <div class="invalid-feedback">
                         Enter valid price.
                     </div>
+
                 </div>
 
 
-                <!-- Country -->
+                <!-- COUNTRY -->
+
                 <div class="col-md-8 mb-3">
+
                     <label for="country" class="form-label">
                         Country
                     </label>
@@ -111,12 +128,14 @@
                     <div class="invalid-feedback">
                         Enter country.
                     </div>
+
                 </div>
 
             </div>
 
 
-            <!-- Location -->
+            <!-- ================= LOCATION ================= -->
+
             <div class="mb-3">
 
                 <label for="location" class="form-label">
@@ -139,8 +158,76 @@
             </div>
 
 
-            <!-- Submit -->
-            <button class="btn btn-dark add-btn">
+            <!-- ================= CATEGORY ================= -->
+
+            <div class="mb-3">
+
+                <label for="category" class="form-label">
+                    Category
+                </label>
+
+                <select
+                    name="listing[category]"
+                    class="form-select"
+                    id="category"
+                    required
+                >
+
+                    <option value="" selected disabled>
+                        Select a category
+                    </option>
+
+                    <option value="Trending">
+                        🔥 Trending
+                    </option>
+
+                    <option value="Rooms">
+                        🛏️ Rooms
+                    </option>
+
+                    <option value="Iconic Cities">
+                        🏙️ Iconic Cities
+                    </option>
+
+                    <option value="Mountains">
+                        🏔️ Mountains
+                    </option>
+
+                    <option value="Castles">
+                        🏰 Castles
+                    </option>
+
+                    <option value="Amazing Pool">
+                        🏊 Amazing Pool
+                    </option>
+
+                    <option value="Camping">
+                        ⛺ Camping
+                    </option>
+
+                    <option value="Farms">
+                        🐄 Farms
+                    </option>
+
+                    <option value="Arctic">
+                        ❄️ Arctic
+                    </option>
+
+                </select>
+
+                <div class="invalid-feedback">
+                    Please select a category.
+                </div>
+
+            </div>
+
+
+            <!-- ================= SUBMIT ================= -->
+
+            <button
+                type="submit"
+                class="btn btn-dark add-btn"
+            >
                 Add Listing
             </button>
 
@@ -148,6 +235,3 @@
 
     </div>
 </div>
-
-
-<script src="/js/validation.js"></script>

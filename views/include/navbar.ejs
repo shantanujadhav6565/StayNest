@@ -1,24 +1,148 @@
+
+<style>
+  .search {
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-search {
+    background-color: #fe424d;
+    color: #fff;
+    border-radius: 25px;
+    padding: 0 1rem;
+    white-space: nowrap;
+  }
+
+  .btn-search:hover {
+    background-color: #fe424d;
+    color: #fff;
+  }
+
+  .btn-search i {
+    display: inline;
+    margin-right: 0.5rem;
+  }
+
+  .search-input {
+    border-radius: 25px;
+    padding: 0.5rem 3rem;
+    font-size: 1rem;
+  }
+</style>
+
+
 <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+
   <div class="container-fluid">
-    <a class="navbar-brand" href="/"><i class="fa-regular fa-compass"></i></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+
+    <!-- Brand -->
+    <a class="navbar-brand" href="/listings">
+      <i class="fa-regular fa-compass"></i>
+    </a>
+
+
+    <!-- Mobile Toggle Button -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
+
+
+    <!-- Navbar Content -->
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
+      <!-- Explore -->
       <div class="navbar-nav">
-        <a class="nav-link " aria-current="page" href="/">Home</a>
-        <a class="nav-link" href="/listings">All Listings</a>
-        <a class="nav-link" href="/listings/new">Add New Listing</a>
+        <a class="nav-link" href="/listings">
+          Explore
+        </a>
       </div>
-        <div class="navbar-nav ms-auto">
-          <% if(!currUser){ %>
-            <a class="nav-link " aria-current="page" href="/signup">SingUp</a>
-        <a class="nav-link" href="/login">LogIn</a>
-         <% } %>
-           <% if(currUser){ %>
-        <a class="nav-link" href="/logout">LogOut</a>
-            <% } %>
+
+
+      <!-- Search -->
+      <div class="navbar-nav ms-auto mt-3 search">
+
+        <form
+          class="d-flex"
+          action="/listings/search"
+          method="GET"
+        >
+
+          <input
+            class="form-control me-2 search-input"
+            type="search"
+            name="location"
+            placeholder="Search destination"
+            autocomplete="off"
+          />
+
+          <button
+            class="btn btn-search"
+            type="submit"
+          >
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Search
+          </button>
+
+        </form>
+
       </div>
+
+
+      <!-- Right Side Navbar -->
+      <div class="navbar-nav ms-auto">
+
+        <!-- Add New Listing -->
+        <a class="nav-link" href="/listings/new">
+          Add New Listing
+        </a>
+
+
+        <!-- If User is NOT Logged In -->
+        <% if(!currUser){ %>
+
+          <a
+            class="nav-link"
+            aria-current="page"
+            href="/signup"
+          >
+            <b>SignUp</b>
+          </a>
+
+          <a
+            class="nav-link"
+            href="/login"
+          >
+            <b>LogIn</b>
+          </a>
+
+        <% } %>
+
+
+        <!-- If User is Logged In -->
+        <% if(currUser){ %>
+
+          <a
+            class="nav-link"
+            href="/logout"
+          >
+            <b>LogOut</b>
+          </a>
+
+        <% } %>
+
+      </div>
+
     </div>
+
   </div>
+
 </nav>
+

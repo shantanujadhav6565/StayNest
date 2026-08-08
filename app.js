@@ -75,9 +75,9 @@ app.use((req, res, next) => {
     next();
 });
 // Routes
-app.get("/", (req, res) => {
-    res.send("Hi I am Root");
-});
+// app.get("/", (req, res) => {
+//     res.send("Hi I am Root");
+// });
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
@@ -98,4 +98,4 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
     console.log(`Server Started on Port ${port}`);
 });
-console.log("MAP_TOKEN =", process.env.MAP_TOKEN);
+// console.log("MAP_TOKEN =", process.env.MAP_TOKEN);
