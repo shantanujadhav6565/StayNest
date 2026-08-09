@@ -105,6 +105,16 @@ app.use((req, res, next) => {
     next();
 });
 
+// ================= HOME ROUTE =================
+
+// When user opens:
+// https://staynest-34ll.onrender.com/
+// redirect to listings page
+
+app.get("/", (req, res) => {
+    res.redirect("/listings");
+});
+
 // ================= ROUTES =================
 
 // Listings
