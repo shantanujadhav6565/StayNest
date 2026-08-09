@@ -1,485 +1,237 @@
 <% layout("layouts/boilerplate") -%>
 
-<style>
-    /* =====================================================
-       CREATE LISTING PAGE
-    ===================================================== */
+<div class="row mt-4">
+    <div class="col-lg-8 offset-lg-2">
+
+        <h3 class="mb-4">Create New Listing</h3>
+
+        <form
+            action="/listings"
+            method="POST"
+            enctype="multipart/form-data"
+            class="needs-validation"
+            novalidate
+        >
+
+            <!-- ================= TITLE ================= -->
+
+            <div class="mb-3">
+
+                <label for="title" class="form-label">
+                    Title
+                </label>
+
+                <input
+                    type="text"
+                    name="listing[title]"
+                    class="form-control"
+                    id="title"
+                    placeholder="Enter title"
+                    required
+                >
+
+                <div class="invalid-feedback">
+                    Please enter a title.
+                </div>
 
-    .create-page {
-        max-width: 900px;
-        margin: 40px auto 70px;
-        padding: 0 20px;
-    }
-
-    .create-card {
-        background: #fff;
-        border: 1px solid #eee;
-        border-radius: 20px;
-        padding: 35px;
-
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    }
-
-    .create-title {
-        font-size: 32px;
-        font-weight: 700;
-        color: #222;
-        margin-bottom: 8px;
-    }
-
-    .create-subtitle {
-        color: #777;
-        font-size: 15px;
-        margin-bottom: 30px;
-    }
-
-
-    /* =====================================================
-       LABELS
-    ===================================================== */
-
-    .form-label {
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 8px;
-    }
-
-
-    /* =====================================================
-       INPUTS
-    ===================================================== */
-
-    .form-control,
-    .form-select {
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        padding: 12px 14px;
-
-        transition: all 0.2s ease;
-    }
-
-    .form-control:focus,
-    .form-select:focus {
-        border-color: #222;
-
-        box-shadow:
-            0 0 0 3px rgba(0, 0, 0, 0.08);
-    }
-
-    textarea.form-control {
-        resize: vertical;
-        min-height: 125px;
-    }
-
-
-    /* =====================================================
-       IMAGE UPLOAD
-    ===================================================== */
-
-    .image-upload-box {
-        border: 2px dashed #ddd;
-        border-radius: 12px;
-        padding: 8px;
-
-        background: #fafafa;
-
-        transition: all 0.2s ease;
-    }
-
-    .image-upload-box:hover {
-        border-color: #999;
-        background: #f5f5f5;
-    }
-
-
-    /* =====================================================
-       CATEGORY
-    ===================================================== */
-
-    .form-select {
-        cursor: pointer;
-        background-color: #fff;
-    }
-
-
-    /* =====================================================
-       ADD BUTTON
-    ===================================================== */
-
-    .add-btn {
-        background: #222;
-        color: #fff;
-
-        border: none;
-        border-radius: 10px;
-
-        padding: 13px 30px;
-
-        font-size: 16px;
-        font-weight: 600;
-
-        transition: all 0.2s ease;
-    }
-
-    .add-btn:hover {
-        background: #000;
-        color: #fff;
-
-        transform: translateY(-1px);
-    }
-
-
-    /* =====================================================
-       TABLET
-    ===================================================== */
-
-    @media (max-width: 768px) {
-
-        .create-page {
-            margin: 25px auto 50px;
-            padding: 0 15px;
-        }
-
-        .create-card {
-            padding: 25px 20px;
-            border-radius: 16px;
-        }
-
-        .create-title {
-            font-size: 27px;
-        }
-
-        .create-subtitle {
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-
-        .add-btn {
-            width: 100%;
-            padding: 14px;
-        }
-    }
-
-
-    /* =====================================================
-       MOBILE
-    ===================================================== */
-
-    @media (max-width: 480px) {
-
-        .create-page {
-            margin-top: 15px;
-            padding: 0 10px;
-        }
-
-        .create-card {
-            padding: 20px 15px;
-            border-radius: 14px;
-        }
-
-        .create-title {
-            font-size: 24px;
-        }
-
-        .create-subtitle {
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .form-label {
-            font-size: 14px;
-        }
-
-        .form-control,
-        .form-select {
-            padding: 11px 12px;
-            font-size: 14px;
-        }
-
-        textarea.form-control {
-            min-height: 110px;
-        }
-
-        .add-btn {
-            font-size: 15px;
-        }
-    }
-
-
-    /* =====================================================
-       VERY SMALL PHONES
-    ===================================================== */
-
-    @media (max-width: 360px) {
-
-        .create-card {
-            padding: 18px 12px;
-        }
-
-        .create-title {
-            font-size: 22px;
-        }
-
-        .form-control,
-        .form-select {
-            font-size: 13px;
-        }
-    }
-</style>
-
-<div class="create-page">
-
-```
-<div class="create-card">
-
-    <!-- ================= HEADER ================= -->
-
-    <h3 class="create-title">
-        Create New Listing
-    </h3>
-
-    <p class="create-subtitle">
-        Add your property details and publish it on StayNest.
-    </p>
-
-
-    <form
-        action="/listings"
-        method="POST"
-        enctype="multipart/form-data"
-        class="needs-validation"
-        novalidate
-    >
-
-
-        <!-- ================= TITLE ================= -->
-
-        <div class="mb-4">
-
-            <label for="title" class="form-label">
-                Title
-            </label>
-
-            <input
-                type="text"
-                name="listing[title]"
-                class="form-control"
-                id="title"
-                placeholder="Enter listing title"
-                required
-            >
-
-            <div class="invalid-feedback">
-                Please enter a title.
             </div>
 
-        </div>
 
+            <!-- ================= DESCRIPTION ================= -->
 
-        <!-- ================= DESCRIPTION ================= -->
+            <div class="mb-3">
 
-        <div class="mb-4">
+                <label for="description" class="form-label">
+                    Description
+                </label>
 
-            <label for="description" class="form-label">
-                Description
-            </label>
+                <textarea
+                    name="listing[description]"
+                    class="form-control"
+                    id="description"
+                    rows="5"
+                    placeholder="Enter description"
+                    required
+                ></textarea>
 
-            <textarea
-                name="listing[description]"
-                class="form-control"
-                id="description"
-                rows="5"
-                placeholder="Describe your property..."
-                required
-            ></textarea>
+                <div class="invalid-feedback">
+                    Please enter description.
+                </div>
 
-            <div class="invalid-feedback">
-                Please enter description.
             </div>
 
-        </div>
 
+            <!-- ================= IMAGE ================= -->
 
-        <!-- ================= IMAGE ================= -->
+            <div class="mb-3">
 
-        <div class="mb-4">
-
-            <label for="image" class="form-label">
-                Upload Image
-            </label>
-
-            <div class="image-upload-box">
+                <label for="image" class="form-label">
+                    Upload Image
+                </label>
 
                 <input
                     type="file"
                     name="listing[image]"
                     class="form-control"
                     id="image"
-                    accept="image/*"
                 >
 
             </div>
 
-        </div>
+
+            <!-- ================= PRICE + COUNTRY ================= -->
+
+            <div class="row">
+
+                <!-- PRICE -->
+
+                <div class="col-md-4 mb-3">
+
+                    <label for="price" class="form-label">
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        name="listing[price]"
+                        class="form-control"
+                        id="price"
+                        placeholder="1200"
+                        min="1"
+                        required
+                    >
+
+                    <div class="invalid-feedback">
+                        Enter valid price.
+                    </div>
+
+                </div>
 
 
-        <!-- ================= PRICE + COUNTRY ================= -->
+                <!-- COUNTRY -->
 
-        <div class="row">
+                <div class="col-md-8 mb-3">
 
-            <!-- PRICE -->
+                    <label for="country" class="form-label">
+                        Country
+                    </label>
 
-            <div class="col-md-4 mb-4">
+                    <input
+                        type="text"
+                        name="listing[country]"
+                        class="form-control"
+                        id="country"
+                        placeholder="India"
+                        required
+                    >
 
-                <label for="price" class="form-label">
-                    Price
-                </label>
+                    <div class="invalid-feedback">
+                        Enter country.
+                    </div>
 
-                <input
-                    type="number"
-                    name="listing[price]"
-                    class="form-control"
-                    id="price"
-                    placeholder="1200"
-                    min="1"
-                    required
-                >
-
-                <div class="invalid-feedback">
-                    Enter valid price.
                 </div>
 
             </div>
 
 
-            <!-- COUNTRY -->
+            <!-- ================= LOCATION ================= -->
 
-            <div class="col-md-8 mb-4">
+            <div class="mb-3">
 
-                <label for="country" class="form-label">
-                    Country
+                <label for="location" class="form-label">
+                    Location
                 </label>
 
                 <input
                     type="text"
-                    name="listing[country]"
+                    name="listing[location]"
                     class="form-control"
-                    id="country"
-                    placeholder="India"
+                    id="location"
+                    placeholder="Pune, Maharashtra"
                     required
                 >
 
                 <div class="invalid-feedback">
-                    Enter country.
+                    Enter location.
                 </div>
 
             </div>
 
-        </div>
 
+            <!-- ================= CATEGORY ================= -->
 
-        <!-- ================= LOCATION ================= -->
+            <div class="mb-3">
 
-        <div class="mb-4">
+                <label for="category" class="form-label">
+                    Category
+                </label>
 
-            <label for="location" class="form-label">
-                Location
-            </label>
+                <select
+                    name="listing[category]"
+                    class="form-select"
+                    id="category"
+                    required
+                >
 
-            <input
-                type="text"
-                name="listing[location]"
-                class="form-control"
-                id="location"
-                placeholder="Pune, Maharashtra"
-                required
-            >
+                    <option value="" selected disabled>
+                        Select a category
+                    </option>
 
-            <div class="invalid-feedback">
-                Enter location.
+                    <option value="Trending">
+                        🔥 Trending
+                    </option>
+
+                    <option value="Rooms">
+                        🛏️ Rooms
+                    </option>
+
+                    <option value="Iconic Cities">
+                        🏙️ Iconic Cities
+                    </option>
+
+                    <option value="Mountains">
+                        🏔️ Mountains
+                    </option>
+
+                    <option value="Castles">
+                        🏰 Castles
+                    </option>
+
+                    <option value="Amazing Pool">
+                        🏊 Amazing Pool
+                    </option>
+
+                    <option value="Camping">
+                        ⛺ Camping
+                    </option>
+
+                    <option value="Farms">
+                        🐄 Farms
+                    </option>
+
+                    <option value="Arctic">
+                        ❄️ Arctic
+                    </option>
+
+                </select>
+
+                <div class="invalid-feedback">
+                    Please select a category.
+                </div>
+
             </div>
 
-        </div>
 
+            <!-- ================= SUBMIT ================= -->
 
-        <!-- ================= CATEGORY ================= -->
-
-        <div class="mb-4">
-
-            <label for="category" class="form-label">
-                Category
-            </label>
-
-            <select
-                name="listing[category]"
-                class="form-select"
-                id="category"
-                required
+            <button
+                type="submit"
+                class="btn btn-dark add-btn"
             >
+                Add Listing
+            </button>
 
-                <option value="" selected disabled>
-                    Select a category
-                </option>
+        </form>
 
-                <option value="Trending">
-                    🔥 Trending
-                </option>
-
-                <option value="Rooms">
-                    🛏️ Rooms
-                </option>
-
-                <option value="Iconic Cities">
-                    🏙️ Iconic Cities
-                </option>
-
-                <option value="Mountains">
-                    🏔️ Mountains
-                </option>
-
-                <option value="Castles">
-                    🏰 Castles
-                </option>
-
-                <option value="Amazing Pool">
-                    🏊 Amazing Pool
-                </option>
-
-                <option value="Camping">
-                    ⛺ Camping
-                </option>
-
-                <option value="Farms">
-                    🐄 Farms
-                </option>
-
-                <option value="Arctic">
-                    ❄️ Arctic
-                </option>
-
-            </select>
-
-            <div class="invalid-feedback">
-                Please select a category.
-            </div>
-
-        </div>
-
-
-        <!-- ================= SUBMIT ================= -->
-
-        <button
-            type="submit"
-            class="btn add-btn"
-        >
-            <i class="fa-solid fa-plus me-2"></i>
-            Add Listing
-        </button>
-
-
-    </form>
-
-</div>
-
-
+    </div>
 </div>

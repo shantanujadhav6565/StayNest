@@ -1,943 +1,371 @@
 <% layout('layouts/boilerplate') -%>
 
-<style>
-    /* =====================================================
-       SHOW LISTING PAGE
-    ===================================================== */
-
-    .show-page {
-        max-width: 1050px;
-        margin: 35px auto 70px;
-        padding: 0 20px;
-    }
-
-
-    /* =====================================================
-       LISTING CARD
-    ===================================================== */
-
-    .show-card {
-        border: none;
-        border-radius: 20px;
-        overflow: hidden;
-
-        background: #fff;
-
-        box-shadow:
-            0 8px 35px rgba(0, 0, 0, 0.08);
-    }
-
-    .show-img {
-        width: 100%;
-        height: 480px;
-
-        object-fit: cover;
-        display: block;
-    }
-
-
-    /* =====================================================
-       CARD BODY
-    ===================================================== */
-
-    .show-card .card-body {
-        padding: 30px;
-    }
-
-    .show-card .card-title {
-        font-size: 32px;
-        font-weight: 700;
-        color: #222;
-    }
-
-    .show-card .card-text {
-        color: #555;
-        font-size: 15px;
-        line-height: 1.7;
-
-        margin-bottom: 18px;
-    }
-
-    .show-card .card-text strong {
-        color: #222;
-    }
-
-
-    /* =====================================================
-       OWNER
-    ===================================================== */
-
-    .owner-name {
-        color: #222;
-        font-weight: 600;
-    }
-
-
-    /* =====================================================
-       ACTION BUTTONS
-    ===================================================== */
-
-    .listing-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 25px;
-    }
-
-    .listing-actions form {
-        margin: 0;
-    }
-
-    .listing-actions .btn {
-        min-width: 90px;
-        border-radius: 9px;
-        padding: 9px 18px;
-        font-weight: 600;
-    }
-
-
-    /* =====================================================
-       MAP SECTION
-    ===================================================== */
-
-    .map-section {
-        max-width: 1050px;
-        margin: 40px auto 0;
-        padding: 0 20px;
-    }
-
-    .section-title {
-        font-size: 27px;
-        font-weight: 700;
-        color: #222;
-        margin-bottom: 18px;
-    }
-
-    .map-controls {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 18px;
-    }
-
-    .map-controls button {
-        border-radius: 20px;
-        padding: 7px 15px;
-        font-size: 13px;
-    }
-
-    #map {
-        width: 100%;
-        height: 450px;
-
-        border-radius: 18px;
-
-        overflow: hidden;
-
-        box-shadow:
-            0 6px 25px rgba(0, 0, 0, 0.08);
-    }
-
-
-    /* =====================================================
-       REVIEW SECTION
-    ===================================================== */
-
-    .reviews-section {
-        max-width: 850px;
-        margin: 55px auto 70px;
-        padding: 0 20px;
-    }
-
-    .review-title {
-        font-size: 27px;
-        font-weight: 700;
-        color: #222;
-    }
-
-
-    /* =====================================================
-       REVIEW FORM
-    ===================================================== */
-
-    .review-form-box {
-        background: #fafafa;
-        border: 1px solid #eee;
-
-        border-radius: 15px;
-
-        padding: 25px;
-        margin-bottom: 35px;
-    }
-
-    .review-form-box legend {
-        font-size: 15px;
-        font-weight: 600;
-        margin-bottom: 10px;
-    }
-
-    .review-form-box textarea {
-        border-radius: 10px;
-        resize: vertical;
-    }
-
-    .review-form-box textarea:focus {
-        border-color: #222;
-
-        box-shadow:
-            0 0 0 3px rgba(0, 0, 0, 0.07);
-    }
-
-    .submit-review-btn {
-        border-radius: 9px;
-        padding: 9px 20px;
-        font-weight: 600;
-    }
-
-
-    /* =====================================================
-       REVIEW CARDS
-    ===================================================== */
-
-    .reviews-grid {
-        display: grid;
-
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-        gap: 18px;
-    }
-
-    .review-card {
-        border: 1px solid #eee;
-        border-radius: 15px;
-
-        background: #fff;
-
-        padding: 20px;
-
-        box-shadow:
-            0 5px 20px rgba(0, 0, 0, 0.05);
-
-        transition: all 0.2s ease;
-    }
-
-    .review-card:hover {
-        transform: translateY(-3px);
-
-        box-shadow:
-            0 8px 25px rgba(0, 0, 0, 0.08);
-    }
-
-    .review-author {
-        font-size: 16px;
-        font-weight: 700;
-
-        color: #222;
-
-        margin-bottom: 8px;
-    }
-
-    .review-comment {
-        color: #555;
-
-        font-size: 14px;
-        line-height: 1.6;
-
-        margin-top: 12px;
-        margin-bottom: 15px;
-    }
-
-    .review-delete-btn {
-        border-radius: 8px;
-        font-size: 12px;
-    }
-
-
-    /* =====================================================
-       LOGIN MESSAGE / EMPTY REVIEW
-    ===================================================== */
-
-    .login-review-message,
-    .no-review-message {
-        color: #777;
-
-        background: #f8f8f8;
-
-        border-radius: 10px;
-
-        padding: 15px;
-    }
-
-
-    /* =====================================================
-       TABLET
-    ===================================================== */
-
-    @media (max-width: 768px) {
-
-        .show-page {
-            margin-top: 20px;
-            padding: 0 15px;
-        }
-
-        .show-card {
-            border-radius: 16px;
-        }
-
-        .show-img {
-            height: 350px;
-        }
-
-        .show-card .card-body {
-            padding: 22px;
-        }
-
-        .show-card .card-title {
-            font-size: 27px;
-        }
-
-        .show-card .card-text {
-            font-size: 14px;
-        }
-
-
-        /* MAP */
-
-        .map-section {
-            padding: 0 15px;
-            margin-top: 30px;
-        }
-
-        .section-title {
-            font-size: 23px;
-        }
-
-        #map {
-            height: 380px;
-            border-radius: 14px;
-        }
-
-
-        /* REVIEWS */
-
-        .reviews-section {
-            padding: 0 15px;
-            margin-top: 40px;
-        }
-
-        .review-title {
-            font-size: 23px;
-        }
-
-        .reviews-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-
-    /* =====================================================
-       MOBILE
-    ===================================================== */
-
-    @media (max-width: 480px) {
-
-        .show-page {
-            padding: 0 10px;
-            margin-top: 15px;
-        }
-
-        .show-card {
-            border-radius: 14px;
-        }
-
-        .show-img {
-            height: 260px;
-        }
-
-        .show-card .card-body {
-            padding: 18px 16px;
-        }
-
-        .show-card .card-title {
-            font-size: 23px;
-            margin-bottom: 15px !important;
-        }
-
-        .show-card .card-text {
-            font-size: 13px;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-
-        /* ACTION BUTTONS */
-
-        .listing-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 20px;
-        }
-
-        .listing-actions form {
-            width: 100%;
-        }
-
-        .listing-actions .btn {
-            width: 100%;
-            padding: 11px;
-        }
-
-
-        /* MAP */
-
-        .map-section {
-            padding: 0 10px;
-            margin-top: 30px;
-        }
-
-        .section-title {
-            font-size: 21px;
-        }
-
-        .map-controls {
-            gap: 6px;
-        }
-
-        .map-controls button {
-            flex: 1 1 calc(50% - 6px);
-
-            padding: 8px 5px;
-
-            font-size: 12px;
-        }
-
-        #map {
-            height: 300px;
-            border-radius: 12px;
-        }
-
-
-        /* REVIEWS */
-
-        .reviews-section {
-            padding: 0 10px;
-            margin-top: 35px;
-        }
-
-        .review-title {
-            font-size: 21px;
-        }
-
-        .review-form-box {
-            padding: 18px 15px;
-            border-radius: 12px;
-        }
-
-        .review-form-box textarea {
-            font-size: 14px;
-        }
-
-        .submit-review-btn {
-            width: 100%;
-            padding: 11px;
-        }
-
-        .review-card {
-            padding: 17px;
-        }
-    }
-
-
-    /* =====================================================
-       VERY SMALL PHONES
-    ===================================================== */
-
-    @media (max-width: 360px) {
-
-        .show-img {
-            height: 230px;
-        }
-
-        .show-card .card-title {
-            font-size: 21px;
-        }
-
-        .map-controls button {
-            font-size: 11px;
-        }
-
-        #map {
-            height: 270px;
-        }
-    }
-</style>
-
-<!-- =====================================================
-     LISTING DETAILS
-===================================================== -->
-
-<div class="show-page">
-
-```
-<div class="card show-card">
-
-    <!-- IMAGE -->
-
-    <img
-        src="<%= listing.image.url %>"
-        class="card-img-top show-img"
-        alt="<%= listing.title %>"
-    >
-
-
-    <!-- DETAILS -->
-
-    <div class="card-body">
-
-        <h3 class="card-title mb-3">
-            <%= listing.title %>
-        </h3>
-
-
-        <!-- OWNER -->
-
-        <p class="card-text">
-
-            <i>
-                Owned by
-
-                <strong class="owner-name">
-                    <%= listing.owner
-                        ? listing.owner.username
-                        : "Unknown"
-                    %>
-                </strong>
-            </i>
-
-        </p>
-
-
-        <!-- PRICE -->
-
-        <p class="card-text">
-
-            <strong>Price:</strong>
-
-            ₹<%= Number(
-                listing.price
-            ).toLocaleString("en-IN") %>
-
-            / night
-
-        </p>
-
-
-        <!-- DESCRIPTION -->
-
-        <p class="card-text">
-
-            <strong>Description:</strong>
-            <br>
-
-            <%= listing.description %>
-
-        </p>
-
-
-        <!-- LOCATION -->
-
-        <p class="card-text">
-
-            <strong>Location:</strong>
-            <br>
-
-            <%= listing.location %>,
-            <%= listing.country %>
-
-        </p>
-
-
-        <!-- OWNER ACTIONS -->
-
-        <% if(
-            currUser &&
-            listing.owner &&
-            listing.owner._id.equals(currUser._id)
-        ){ %>
-
-            <div class="listing-actions">
-
-                <form
-                    action="/listings/<%= listing._id %>/edit"
-                    method="GET"
+    <div class="row mt-4">
+        <div class="col-lg-8 offset-lg-2">
+
+            <div class="card show-card">
+
+                <img
+                    src="<%= listing.image.url %>"
+                    class="card-img-top show-img"
+                    alt="Listing Image"
                 >
 
-                    <button class="btn btn-dark">
-                        <i class="fa-solid fa-pen me-1"></i>
-                        Edit
-                    </button>
+                <div class="card-body">
 
-                </form>
+                    <h3 class="card-title mb-3">
+                        <%= listing.title %>
+                    </h3>
 
 
-                <form
-                    action="/listings/<%= listing._id %>?_method=DELETE"
-                    method="POST"
-                >
+                    <p class="card-text">
+                        <i>
+                            Owned by 
+                            <strong>
+                                <%= listing.owner ? listing.owner.username : "Unknown" %>
+                            </strong>
+                        </i>
+                    </p>
 
-                    <button class="btn btn-danger">
-                        <i class="fa-solid fa-trash me-1"></i>
-                        Delete
-                    </button>
 
-                </form>
+                    <p class="card-text">
+                        <strong>Price:</strong>
+                        ₹<%= Number(listing.price).toLocaleString("en-IN") %> / night
+                    </p>
+
+
+                    <p class="card-text">
+                        <strong>Description:</strong><br>
+                        <%= listing.description %>
+                    </p>
+
+
+                    <p class="card-text">
+                        <strong>Location:</strong><br>
+                        <%= listing.location %>, <%= listing.country %>
+                    </p>
+
+
+
+                    <% if(currUser && listing.owner && listing.owner._id.equals(currUser._id)){ %>
+
+
+                    <form
+                        action="/listings/<%= listing._id %>/edit"
+                        method="GET"
+                        class="d-inline"
+                    >
+                        <button class="btn btn-dark">
+                            Edit
+                        </button>
+                    </form>
+
+
+
+                    <form
+                        action="/listings/<%= listing._id %>?_method=DELETE"
+                        method="POST"
+                        class="d-inline"
+                    >
+                        <button class="btn btn-danger">
+                            Delete
+                        </button>
+                    </form>
+
+
+                    <% } %>
+
+
+                </div>
 
             </div>
 
-        <% } %>
-
+        </div>
     </div>
 
-</div>
-```
 
-</div>
+    <!-- map -->
+    <hr>
+    <h3 class="mb-3 offset-2">Location Map</h3>
+    <div class="d-flex flex-wrap gap-2 mb-3 offset-2">
 
-<!-- =====================================================
-     MAP
-===================================================== -->
-
-<div class="map-section">
-
-```
-<hr>
-
-<h3 class="section-title">
-    Location Map
-</h3>
-
-
-<div class="map-controls">
-
-    <button
-        class="btn btn-outline-dark"
-        onclick="changeStyle('streets')"
-    >
+    <button class="btn btn-outline-dark btn-sm" onclick="changeStyle('streets')">
         🗺️ Map
     </button>
 
-    <button
-        class="btn btn-outline-dark"
-        onclick="changeStyle('satellite')"
-    >
+    <button class="btn btn-outline-dark btn-sm" onclick="changeStyle('satellite')">
         🛰️ Satellite
     </button>
 
-    <button
-        class="btn btn-outline-dark"
-        onclick="changeStyle('hybrid')"
-    >
+    <button class="btn btn-outline-dark btn-sm" onclick="changeStyle('hybrid')">
         🌍 Hybrid
     </button>
 
-    <button
-        class="btn btn-outline-dark"
-        onclick="changeStyle('outdoor')"
-    >
-        🏕️ Outdoor
+    <button class="btn btn-outline-dark btn-sm" onclick="changeStyle('outdoor')">
+        🏕 Outdoor
     </button>
 
-    <button
-        class="btn btn-outline-dark"
-        onclick="changeStyle('bright')"
-    >
-        ☀️ Bright
+    <button class="btn btn-outline-dark btn-sm" onclick="changeStyle('bright')">
+        ☀ Bright
     </button>
 
-    <button
-        class="btn btn-outline-dark"
-        onclick="changeStyle('basic')"
-    >
+    <button class="btn btn-outline-dark btn-sm" onclick="changeStyle('basic')">
         📄 Basic
     </button>
 
 </div>
 
+    <div id="map"></div>
 
-<div id="map"></div>
-```
-
-</div>
-
-<!-- =====================================================
-     REVIEWS
-===================================================== -->
-
-<div class="reviews-section">
-
-```
-<hr>
-
-<h3 class="review-title mb-4">
-    Leave a Review
-</h3>
+    <!-- ================= Review Form ================= -->
 
 
-<% if(currUser){ %>
+    <div class="row mt-5">
 
-    <div class="review-form-box">
+        <div class="col-lg-8 offset-lg-2">
 
-        <form
-            action="/listings/<%= listing._id %>/reviews"
-            method="POST"
-            class="needs-validation"
-            novalidate
-        >
-
-            <!-- RATING -->
-
-            <div class="mb-4">
-
-                <fieldset class="starability-slot">
-
-                    <legend>
-                        Rate this Listing
-                    </legend>
+            <hr>
 
 
-                    <input
-                        type="radio"
-                        id="no-rate"
-                        class="input-no-rate"
-                        name="review[rating]"
-                        value="0"
-                        checked
-                    >
+            <h3 class="mb-3">
+                Leave a Review
+            </h3>
 
 
-                    <input
-                        type="radio"
-                        id="rate1"
-                        name="review[rating]"
-                        value="1"
-                    >
 
-                    <label for="rate1">
-                        1 star
-                    </label>
+            <% if(currUser){ %>
 
 
-                    <input
-                        type="radio"
-                        id="rate2"
-                        name="review[rating]"
-                        value="2"
-                    >
-
-                    <label for="rate2">
-                        2 stars
-                    </label>
-
-
-                    <input
-                        type="radio"
-                        id="rate3"
-                        name="review[rating]"
-                        value="3"
-                    >
-
-                    <label for="rate3">
-                        3 stars
-                    </label>
-
-
-                    <input
-                        type="radio"
-                        id="rate4"
-                        name="review[rating]"
-                        value="4"
-                    >
-
-                    <label for="rate4">
-                        4 stars
-                    </label>
-
-
-                    <input
-                        type="radio"
-                        id="rate5"
-                        name="review[rating]"
-                        value="5"
-                    >
-
-                    <label for="rate5">
-                        5 stars
-                    </label>
-
-                </fieldset>
-
-            </div>
-
-
-            <!-- COMMENT -->
-
-            <div class="mb-3">
-
-                <label class="form-label">
-                    Comment
-                </label>
-
-                <textarea
-                    name="review[comment]"
-                    rows="4"
-                    class="form-control"
-                    placeholder="Share your experience..."
-                    required
-                ></textarea>
-
-                <div class="invalid-feedback">
-                    Please enter a comment.
-                </div>
-
-            </div>
-
-
-            <button
-                class="btn btn-outline-dark submit-review-btn"
+            <form
+                action="/listings/<%= listing._id %>/reviews"
+                method="POST"
+                class="needs-validation"
+                novalidate
             >
-                <i class="fa-solid fa-paper-plane me-1"></i>
-                Submit Review
-            </button>
-
-        </form>
-
-    </div>
-
-<% } else { %>
-
-    <p class="login-review-message">
-        <i class="fa-solid fa-lock me-1"></i>
-        Please login to write a review.
-    </p>
-
-<% } %>
 
 
-<!-- =================================================
-     ALL REVIEWS
-================================================= -->
-
-<hr>
-
-<h3 class="review-title mb-4">
-    All Reviews
-</h3>
+                <div class="mb-3">
 
 
-<% if(
-    listing.reviews &&
-    listing.reviews.length > 0
-){ %>
+                    <fieldset class="starability-slot">
 
-    <div class="reviews-grid">
+                        <legend>
+                            Rate this Listing
+                        </legend>
 
-        <% for(let review of listing.reviews){ %>
 
-            <div class="review-card">
+                        <input
+                            type="radio"
+                            id="no-rate"
+                            class="input-no-rate"
+                            name="review[rating]"
+                            value="0"
+                            checked
+                        />
 
-                <div class="review-author">
 
-                    @<%= review.author
-                        ? review.author.username
-                        : "Anonymous"
-                    %>
+                        <input type="radio" id="rate1" name="review[rating]" value="1">
+                        <label for="rate1">1 star</label>
+
+
+                        <input type="radio" id="rate2" name="review[rating]" value="2">
+                        <label for="rate2">2 stars</label>
+
+
+                        <input type="radio" id="rate3" name="review[rating]" value="3">
+                        <label for="rate3">3 stars</label>
+
+
+                        <input type="radio" id="rate4" name="review[rating]" value="4">
+                        <label for="rate4">4 stars</label>
+
+
+                        <input type="radio" id="rate5" name="review[rating]" value="5">
+                        <label for="rate5">5 stars</label>
+
+
+                    </fieldset>
+
 
                 </div>
 
 
-                <fieldset
-                    class="starability-result"
-                    data-rating="<%= review.rating %>"
-                >
-
-                    Rated:
-                    <%= review.rating %>
-                    stars
-
-                </fieldset>
 
 
-                <p class="review-comment">
+                <div class="mb-3">
 
-                    <%= review.comment %>
+                    <label class="form-label">
+                        Comment
+                    </label>
 
-                </p>
+
+                    <textarea
+                        name="review[comment]"
+                        rows="4"
+                        class="form-control"
+                        required
+                    ></textarea>
 
 
-                <% if(
-                    currUser &&
-                    review.author &&
-                    review.author._id.equals(currUser._id)
-                ){ %>
+                    <div class="invalid-feedback">
+                        Please enter a comment.
+                    </div>
 
-                    <form
-                        action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
-                        method="POST"
-                    >
 
-                        <button
-                            class="btn btn-sm btn-dark review-delete-btn"
+                </div>
+
+
+
+                <button class="btn btn-outline-dark">
+                    Submit
+                </button>
+
+
+            </form>
+
+
+            <% } else { %>
+
+
+            <p class="text-muted">
+                Please login to write a review.
+            </p>
+
+
+            <% } %>
+
+
+
+            <hr>
+
+
+
+            <h3 class="mb-3">
+                All Reviews
+            </h3>
+
+
+
+
+            <div class="row">
+
+
+                <% if(listing.reviews && listing.reviews.length > 0){ %>
+
+
+                    <% for(let review of listing.reviews){ %>
+
+
+
+                    <div class="card col-md-5 me-3 mb-3">
+
+
+                        <div class="card-body">
+
+
+                            <h5 class="card-title">
+
+                                @<%= review.author ? review.author.username : "Anonymous" %>
+
+                            </h5>
+
+
+
+                            <fieldset
+                                class="starability-result"
+                                data-rating="<%= review.rating %>"
+                            >
+
+                                Rated:
+                                <%= review.rating %>
+                                stars
+
+                            </fieldset>
+
+
+
+
+                            <p class="card-text mt-2">
+
+                                <%= review.comment %>
+
+                            </p>
+
+
+
+                        </div>
+
+
+
+
+
+                        <% if(currUser && review.author && review.author._id.equals(currUser._id)){ %>
+
+
+
+                        <form
+                            action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
+                            method="POST"
+                            class="ms-3 mb-3"
                         >
-                            <i class="fa-solid fa-trash me-1"></i>
-                            Delete
-                        </button>
 
-                    </form>
+                            <button class="btn btn-sm btn-dark">
+                                Delete
+                            </button>
+
+
+                        </form>
+
+
+
+                        <% } %>
+
+
+
+                    </div>
+
+
+
+
+                    <% } %>
+
+
+
+                <% } else { %>
+
+
+
+                    <p class="text-muted">
+                        No reviews yet.
+                    </p>
+
+
 
                 <% } %>
 
+
+
             </div>
 
-        <% } %>
+
+        </div>
 
     </div>
 
 
-<% } else { %>
 
-    <p class="no-review-message">
-        <i class="fa-regular fa-comment me-1"></i>
-        No reviews yet.
-    </p>
+    <script>
+        const coordinates = <%- JSON.stringify(listing.geometry.coordinates) %>;
+        const mapToken = "<%= mapToken %>";
+        const listingTitle = "<%= listing.title %>";
+    </script>
 
-<% } %>
-```
+    <link
+        rel="stylesheet"
+        href="https://cdn.maptiler.com/maptiler-sdk-js/latest/maptiler-sdk.css"
+    />
 
-</div>
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/latest/maptiler-sdk.umd.min.js"></script>
 
-<!-- =====================================================
-     MAP SCRIPT
-===================================================== -->
-
-<script>
-    const coordinates =
-        <%- JSON.stringify(listing.geometry.coordinates) %>;
-
-    const mapToken =
-        "<%= mapToken %>";
-
-    const listingTitle =
-        "<%= listing.title %>";
-</script>
-
-<link
-    rel="stylesheet"
-    href="https://cdn.maptiler.com/maptiler-sdk-js/latest/maptiler-sdk.css"
-/>
-
-<script src="https://cdn.maptiler.com/maptiler-sdk-js/latest/maptiler-sdk.umd.min.js"></script>
-
-<script src="/js/map.js"></script>
-
-<script src="/js/script.js"></script>
+    <script src="/js/map.js"></script>
+    <script src="/js/script.js"></script>
