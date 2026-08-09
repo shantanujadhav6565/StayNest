@@ -1,40 +1,319 @@
 <% layout("layouts/boilerplate") -%>
 
-<div class="row">
-    <h2 class="col-6 offset-3 mt-3">Login</h2>
+<style>
+    /* =====================================================
+       LOGIN PAGE
+    ===================================================== */
 
-    <div class="col-6 offset-3">
-        <form action="/login" method="POST" class="needs-validation" novalidate>
+    .login-page {
+        min-height: calc(100vh - 160px);
 
-            <div class="mb-3 mt-2">
-                <label for="username" class="form-label">Username</label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    class="form-control"
-                    required
-                >
-                
-            </div>
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 40px 20px 70px;
+    }
 
 
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    class="form-control"
-                    required
-                >
-                
-            </div>
+    /* =====================================================
+       LOGIN CARD
+    ===================================================== */
 
-            <button type="submit" class="btn btn-success">
-                Login
-            </button>
+    .login-card {
+        width: 100%;
+        max-width: 450px;
 
-        </form>
+        background: #fff;
+
+        border: 1px solid #eee;
+        border-radius: 20px;
+
+        padding: 35px;
+
+        box-shadow:
+            0 10px 35px rgba(0, 0, 0, 0.08);
+    }
+
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+
+    .login-icon {
+        width: 60px;
+        height: 60px;
+
+        margin: 0 auto 18px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #222;
+        color: #fff;
+
+        font-size: 24px;
+    }
+
+    .login-title {
+        text-align: center;
+
+        font-size: 30px;
+        font-weight: 700;
+
+        color: #222;
+
+        margin-bottom: 7px;
+    }
+
+    .login-subtitle {
+        text-align: center;
+
+        color: #777;
+
+        font-size: 14px;
+
+        margin-bottom: 30px;
+    }
+
+
+    /* =====================================================
+       FORM
+    ===================================================== */
+
+    .login-form .form-label {
+        font-weight: 600;
+        color: #333;
+
+        margin-bottom: 8px;
+    }
+
+    .login-form .form-control {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+
+        padding: 12px 14px;
+
+        transition: all 0.2s ease;
+    }
+
+    .login-form .form-control:focus {
+        border-color: #222;
+
+        box-shadow:
+            0 0 0 3px rgba(0, 0, 0, 0.08);
+    }
+
+
+    /* =====================================================
+       LOGIN BUTTON
+    ===================================================== */
+
+    .login-btn {
+        width: 100%;
+
+        border: none;
+        border-radius: 10px;
+
+        background: #222;
+        color: #fff;
+
+        padding: 13px;
+
+        font-size: 16px;
+        font-weight: 600;
+
+        transition: all 0.2s ease;
+    }
+
+    .login-btn:hover {
+        background: #000;
+        color: #fff;
+
+        transform: translateY(-1px);
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media (max-width: 480px) {
+
+        .login-page {
+            min-height: auto;
+
+            padding: 25px 12px 50px;
+        }
+
+        .login-card {
+            padding: 25px 18px;
+
+            border-radius: 15px;
+        }
+
+        .login-icon {
+            width: 52px;
+            height: 52px;
+
+            font-size: 20px;
+
+            margin-bottom: 15px;
+        }
+
+        .login-title {
+            font-size: 25px;
+        }
+
+        .login-subtitle {
+            font-size: 13px;
+
+            margin-bottom: 24px;
+        }
+
+        .login-form .form-label {
+            font-size: 14px;
+        }
+
+        .login-form .form-control {
+            padding: 11px 12px;
+
+            font-size: 14px;
+        }
+
+        .login-btn {
+            padding: 12px;
+
+            font-size: 15px;
+        }
+    }
+
+
+    /* =====================================================
+       VERY SMALL PHONES
+    ===================================================== */
+
+    @media (max-width: 360px) {
+
+        .login-card {
+            padding: 22px 15px;
+        }
+
+        .login-title {
+            font-size: 23px;
+        }
+
+        .login-form .form-control {
+            font-size: 13px;
+        }
+    }
+</style>
+
+<div class="login-page">
+
+```
+<div class="login-card">
+
+    <!-- LOGIN ICON -->
+
+    <div class="login-icon">
+        <i class="fa-solid fa-right-to-bracket"></i>
     </div>
+
+
+    <!-- HEADER -->
+
+    <h2 class="login-title">
+        Welcome Back
+    </h2>
+
+    <p class="login-subtitle">
+        Login to your StayNest account
+    </p>
+
+
+    <!-- LOGIN FORM -->
+
+    <form
+        action="/login"
+        method="POST"
+        class="needs-validation login-form"
+        novalidate
+    >
+
+
+        <!-- USERNAME -->
+
+        <div class="mb-4">
+
+            <label
+                for="username"
+                class="form-label"
+            >
+                Username
+            </label>
+
+            <input
+                type="text"
+                id="username"
+                name="username"
+                class="form-control"
+                placeholder="Enter your username"
+                autocomplete="username"
+                required
+            >
+
+            <div class="invalid-feedback">
+                Please enter your username.
+            </div>
+
+        </div>
+
+
+        <!-- PASSWORD -->
+
+        <div class="mb-4">
+
+            <label
+                for="password"
+                class="form-label"
+            >
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                required
+            >
+
+            <div class="invalid-feedback">
+                Please enter your password.
+            </div>
+
+        </div>
+
+
+        <!-- LOGIN -->
+
+        <button
+            type="submit"
+            class="btn login-btn"
+        >
+            <i class="fa-solid fa-right-to-bracket me-2"></i>
+            Login
+        </button>
+
+
+    </form>
+
+</div>
+
 </div>

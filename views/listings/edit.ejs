@@ -1,68 +1,253 @@
 <% layout("layouts/boilerplate") -%>
 
-<div class="row">
-    <div class="col-md-8 offset-md-2">
+<style>
+    .edit-page {
+        max-width: 900px;
+        margin: 40px auto 70px;
+        padding: 0 20px;
+    }
 
-        <h3>Edit Listing</h3>
+    .edit-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 35px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid #eee;
+    }
 
-        <form
-            action="/listings/<%= listing._id %>?_method=PUT"
-            method="POST"
-            enctype="multipart/form-data"
-            class="needs-validation"
-            novalidate
-        >
+    .edit-title {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: #222;
+    }
 
-            <!-- Title -->
-            <div class="mb-3">
-                <label for="title" class="form-label">Title</label>
-                <input
-                    type="text"
-                    id="title"
-                    name="listing[title]"
-                    value="<%= listing.title %>"
-                    class="form-control"
-                    required
-                >
-                <div class="valid-feedback">
-                    Looks good!
-                </div>
+    .edit-subtitle {
+        color: #777;
+        margin-bottom: 30px;
+        font-size: 15px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        padding: 12px 14px;
+        border: 1px solid #ddd;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+        border-color: #222;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .current-image-box {
+        margin-top: 10px;
+        padding: 12px;
+        background: #f8f8f8;
+        border-radius: 15px;
+        display: inline-block;
+    }
+
+    .current-image {
+        width: 400px;
+        max-width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 12px;
+        display: block;
+    }
+
+    .upload-box {
+        border: 2px dashed #ddd;
+        border-radius: 12px;
+        padding: 8px;
+        background: #fafafa;
+    }
+
+    .update-btn {
+        background: #222;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 13px 28px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .update-btn:hover {
+        background: #000;
+        transform: translateY(-1px);
+        color: #fff;
+    }
+
+    @media (max-width: 768px) {
+
+        .edit-page {
+            margin: 25px auto 50px;
+            padding: 0 15px;
+        }
+
+        .edit-card {
+            padding: 22px 18px;
+            border-radius: 15px;
+        }
+
+        .edit-title {
+            font-size: 26px;
+        }
+
+        .edit-subtitle {
+            font-size: 14px;
+            margin-bottom: 22px;
+        }
+
+        .current-image-box {
+            width: 100%;
+        }
+
+        .current-image {
+            width: 100%;
+            height: 220px;
+        }
+
+        .update-btn {
+            width: 100%;
+            padding: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+
+        .edit-page {
+            margin-top: 15px;
+            padding: 0 10px;
+        }
+
+        .edit-card {
+            padding: 20px 15px;
+        }
+
+        .edit-title {
+            font-size: 23px;
+        }
+
+        .edit-subtitle {
+            font-size: 13px;
+        }
+
+        .form-control {
+            padding: 11px 12px;
+            font-size: 14px;
+        }
+
+        .current-image {
+            height: 200px;
+        }
+
+        .update-btn {
+            font-size: 15px;
+        }
+    }
+</style>
+
+<div class="edit-page">
+
+```
+<div class="edit-card">
+
+    <h3 class="edit-title">Edit Listing</h3>
+
+    <p class="edit-subtitle">
+        Update your listing details and keep your property information fresh.
+    </p>
+
+    <form
+        action="/listings/<%= listing._id %>?_method=PUT"
+        method="POST"
+        enctype="multipart/form-data"
+        class="needs-validation"
+        novalidate
+    >
+
+        <!-- Title -->
+        <div class="mb-4">
+            <label for="title" class="form-label">
+                Title
+            </label>
+
+            <input
+                type="text"
+                id="title"
+                name="listing[title]"
+                value="<%= listing.title %>"
+                class="form-control"
+                placeholder="Enter listing title"
+                required
+            >
+
+            <div class="valid-feedback">
+                Looks good!
             </div>
 
-            <!-- Description -->
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea
-                    id="description"
-                    name="listing[description]"
-                    class="form-control"
-                    rows="4"
-                    required
-                ><%= listing.description %></textarea>
-
-                <div class="invalid-feedback">
-                    Please Enter Description.
-                </div>
+            <div class="invalid-feedback">
+                Please enter a title.
             </div>
+        </div>
 
-            <!-- Current Image -->
-            <div class="mb-3">
-                <label class="form-label">Current Image</label><br>
+        <!-- Description -->
+        <div class="mb-4">
+            <label for="description" class="form-label">
+                Description
+            </label>
 
+            <textarea
+                id="description"
+                name="listing[description]"
+                class="form-control"
+                rows="5"
+                placeholder="Describe your property..."
+                required
+            ><%= listing.description %></textarea>
+
+            <div class="invalid-feedback">
+                Please enter a description.
+            </div>
+        </div>
+
+        <!-- Current Image -->
+        <div class="mb-4">
+            <label class="form-label">
+                Current Image
+            </label>
+
+            <div class="current-image-box">
                 <img
                     src="<%= listing.image.url %>"
                     alt="Listing Image"
-                    class="img-fluid rounded"
-                    style="height:250px; width:400px; object-fit:cover;"
+                    class="current-image"
                 >
             </div>
+        </div>
 
-            <!-- Upload New Image -->
-            <div class="mb-3">
-                <label for="image" class="form-label">
-                    Upload New Image
-                </label>
+        <!-- Upload New Image -->
+        <div class="mb-4">
+            <label for="image" class="form-label">
+                Upload New Image
+            </label>
 
+            <div class="upload-box">
                 <input
                     type="file"
                     id="image"
@@ -71,70 +256,81 @@
                     accept="image/*"
                 >
             </div>
+        </div>
 
-            <!-- Price & Country -->
-            <div class="row">
+        <!-- Price & Country -->
+        <div class="row">
 
-                <div class="mb-3 col-md-4">
-                    <label for="price" class="form-label">Price</label>
-
-                    <input
-                        type="number"
-                        id="price"
-                        name="listing[price]"
-                        value="<%= listing.price %>"
-                        class="form-control"
-                        required
-                    >
-
-                    <div class="invalid-feedback">
-                        Please Enter Price.
-                    </div>
-                </div>
-
-                <div class="mb-3 col-md-8">
-                    <label for="country" class="form-label">Country</label>
-
-                    <input
-                        type="text"
-                        id="country"
-                        name="listing[country]"
-                        value="<%= listing.country %>"
-                        class="form-control"
-                        required
-                    >
-
-                    <div class="invalid-feedback">
-                        Please Enter Country.
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Location -->
-            <div class="mb-4">
-                <label for="location" class="form-label">Location</label>
+            <div class="mb-4 col-md-4">
+                <label for="price" class="form-label">
+                    Price
+                </label>
 
                 <input
-                    type="text"
-                    id="location"
-                    name="listing[location]"
-                    value="<%= listing.location %>"
+                    type="number"
+                    id="price"
+                    name="listing[price]"
+                    value="<%= listing.price %>"
                     class="form-control"
+                    placeholder="Enter price"
                     required
                 >
 
                 <div class="invalid-feedback">
-                    Please Enter Location.
+                    Please enter price.
                 </div>
             </div>
 
-            <!-- Submit -->
-            <button type="submit" class="btn btn-dark">
-                Update Listing
-            </button>
+            <div class="mb-4 col-md-8">
+                <label for="country" class="form-label">
+                    Country
+                </label>
 
-        </form>
+                <input
+                    type="text"
+                    id="country"
+                    name="listing[country]"
+                    value="<%= listing.country %>"
+                    class="form-control"
+                    placeholder="Enter country"
+                    required
+                >
 
-    </div>
+                <div class="invalid-feedback">
+                    Please enter country.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Location -->
+        <div class="mb-4">
+            <label for="location" class="form-label">
+                Location
+            </label>
+
+            <input
+                type="text"
+                id="location"
+                name="listing[location]"
+                value="<%= listing.location %>"
+                class="form-control"
+                placeholder="Enter property location"
+                required
+            >
+
+            <div class="invalid-feedback">
+                Please enter location.
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="update-btn">
+            Update Listing
+        </button>
+
+    </form>
+
+</div>
+
 </div>

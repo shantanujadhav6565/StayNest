@@ -1,9 +1,155 @@
 <% layout('layouts/boilerplate') %>
 
-<div class="row mt-4">
-    <div class="col-6 offset-3">
-        <div class="alert alert-danger" role="alert">
-           <%= message %>
-        </div>
+<style>
+    /* =====================================================
+       ERROR PAGE
+    ===================================================== */
+
+    .error-page {
+        min-height: calc(100vh - 180px);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 40px 20px 70px;
+    }
+
+    .error-card {
+        width: 100%;
+        max-width: 650px;
+
+        background: #fff;
+
+        border: 1px solid #eee;
+        border-radius: 20px;
+
+        padding: 35px;
+
+        text-align: center;
+
+        box-shadow:
+            0 10px 35px rgba(0, 0, 0, 0.08);
+    }
+
+    .error-icon {
+        width: 65px;
+        height: 65px;
+
+        margin: 0 auto 18px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #f8d7da;
+        color: #dc3545;
+
+        font-size: 28px;
+    }
+
+    .error-title {
+        font-size: 28px;
+        font-weight: 700;
+
+        color: #222;
+
+        margin-bottom: 10px;
+    }
+
+    .error-message {
+        margin: 0;
+
+        padding: 15px 18px;
+
+        border-radius: 10px;
+
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media (max-width: 480px) {
+
+        .error-page {
+            min-height: auto;
+
+            padding: 30px 12px 50px;
+        }
+
+        .error-card {
+            padding: 25px 18px;
+
+            border-radius: 15px;
+        }
+
+        .error-icon {
+            width: 55px;
+            height: 55px;
+
+            font-size: 23px;
+
+            margin-bottom: 15px;
+        }
+
+        .error-title {
+            font-size: 23px;
+        }
+
+        .error-message {
+            font-size: 13px;
+
+            padding: 13px;
+        }
+    }
+
+
+    /* =====================================================
+       VERY SMALL PHONES
+    ===================================================== */
+
+    @media (max-width: 360px) {
+
+        .error-card {
+            padding: 22px 14px;
+        }
+
+        .error-title {
+            font-size: 21px;
+        }
+
+        .error-message {
+            font-size: 12px;
+        }
+    }
+</style>
+
+<div class="error-page">
+
+```
+<div class="error-card">
+
+    <div class="error-icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
     </div>
+
+    <h2 class="error-title">
+        Something went wrong
+    </h2>
+
+    <div
+        class="alert alert-danger error-message"
+        role="alert"
+    >
+        <%= message %>
+    </div>
+
+</div>
+
 </div>

@@ -1,57 +1,365 @@
 <% layout("layouts/boilerplate") -%>
 
-<div class="row">
-    <h2 class="col-6 offset-3 mt-3">Sign Up on StayNest</h2>
+<style>
+    /* =====================================================
+       SIGNUP PAGE
+    ===================================================== */
 
-    <div class="col-6 offset-3">
-        <form action="/signup" method="POST" class="needs-validation" novalidate>
+    .signup-page {
+        min-height: calc(100vh - 160px);
 
-            <div class="mb-3 mt-2">
-                <label for="username" class="form-label">Username</label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    class="form-control"
-                    required
-                >
-                <div class="valid-feedback">
-                    Looks Good!
-                </div>
-            </div>
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    class="form-control"
-                    required
-                >
-                <div class="valid-feedback">
-                    Looks Good!
-                </div>
-            </div>
+        padding: 40px 20px 70px;
+    }
 
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    class="form-control"
-                    required
-                >
-                <div class="valid-feedback">
-                    Looks Good!
-                </div>
-            </div>
 
-            <button type="submit" class="btn btn-success">
-                Sign Up
-            </button>
+    /* =====================================================
+       SIGNUP CARD
+    ===================================================== */
 
-        </form>
+    .signup-card {
+        width: 100%;
+        max-width: 450px;
+
+        background: #fff;
+
+        border: 1px solid #eee;
+        border-radius: 20px;
+
+        padding: 35px;
+
+        box-shadow:
+            0 10px 35px rgba(0, 0, 0, 0.08);
+    }
+
+
+    /* =====================================================
+       ICON
+    ===================================================== */
+
+    .signup-icon {
+        width: 60px;
+        height: 60px;
+
+        margin: 0 auto 18px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #222;
+        color: #fff;
+
+        font-size: 24px;
+    }
+
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+
+    .signup-title {
+        text-align: center;
+
+        font-size: 30px;
+        font-weight: 700;
+
+        color: #222;
+
+        margin-bottom: 7px;
+    }
+
+    .signup-subtitle {
+        text-align: center;
+
+        color: #777;
+
+        font-size: 14px;
+
+        margin-bottom: 30px;
+    }
+
+
+    /* =====================================================
+       FORM
+    ===================================================== */
+
+    .signup-form .form-label {
+        font-weight: 600;
+        color: #333;
+
+        margin-bottom: 8px;
+    }
+
+    .signup-form .form-control {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+
+        padding: 12px 14px;
+
+        transition: all 0.2s ease;
+    }
+
+    .signup-form .form-control:focus {
+        border-color: #222;
+
+        box-shadow:
+            0 0 0 3px rgba(0, 0, 0, 0.08);
+    }
+
+
+    /* =====================================================
+       SIGNUP BUTTON
+    ===================================================== */
+
+    .signup-btn {
+        width: 100%;
+
+        border: none;
+        border-radius: 10px;
+
+        background: #222;
+        color: #fff;
+
+        padding: 13px;
+
+        font-size: 16px;
+        font-weight: 600;
+
+        transition: all 0.2s ease;
+    }
+
+    .signup-btn:hover {
+        background: #000;
+        color: #fff;
+
+        transform: translateY(-1px);
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media (max-width: 480px) {
+
+        .signup-page {
+            min-height: auto;
+
+            padding: 25px 12px 50px;
+        }
+
+        .signup-card {
+            padding: 25px 18px;
+
+            border-radius: 15px;
+        }
+
+        .signup-icon {
+            width: 52px;
+            height: 52px;
+
+            font-size: 20px;
+
+            margin-bottom: 15px;
+        }
+
+        .signup-title {
+            font-size: 25px;
+        }
+
+        .signup-subtitle {
+            font-size: 13px;
+
+            margin-bottom: 24px;
+        }
+
+        .signup-form .form-label {
+            font-size: 14px;
+        }
+
+        .signup-form .form-control {
+            padding: 11px 12px;
+
+            font-size: 14px;
+        }
+
+        .signup-btn {
+            padding: 12px;
+
+            font-size: 15px;
+        }
+    }
+
+
+    /* =====================================================
+       VERY SMALL PHONES
+    ===================================================== */
+
+    @media (max-width: 360px) {
+
+        .signup-card {
+            padding: 22px 15px;
+        }
+
+        .signup-title {
+            font-size: 23px;
+        }
+
+        .signup-form .form-control {
+            font-size: 13px;
+        }
+    }
+</style>
+
+<div class="signup-page">
+
+```
+<div class="signup-card">
+
+    <!-- SIGNUP ICON -->
+
+    <div class="signup-icon">
+        <i class="fa-solid fa-user-plus"></i>
     </div>
+
+
+    <!-- HEADER -->
+
+    <h2 class="signup-title">
+        Create Account
+    </h2>
+
+    <p class="signup-subtitle">
+        Join StayNest and start exploring amazing stays
+    </p>
+
+
+    <!-- SIGNUP FORM -->
+
+    <form
+        action="/signup"
+        method="POST"
+        class="needs-validation signup-form"
+        novalidate
+    >
+
+
+        <!-- USERNAME -->
+
+        <div class="mb-4">
+
+            <label
+                for="username"
+                class="form-label"
+            >
+                Username
+            </label>
+
+            <input
+                type="text"
+                id="username"
+                name="username"
+                class="form-control"
+                placeholder="Choose a username"
+                autocomplete="username"
+                required
+            >
+
+            <div class="valid-feedback">
+                Looks Good!
+            </div>
+
+            <div class="invalid-feedback">
+                Please enter a username.
+            </div>
+
+        </div>
+
+
+        <!-- EMAIL -->
+
+        <div class="mb-4">
+
+            <label
+                for="email"
+                class="form-label"
+            >
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                class="form-control"
+                placeholder="Enter your email"
+                autocomplete="email"
+                required
+            >
+
+            <div class="valid-feedback">
+                Looks Good!
+            </div>
+
+            <div class="invalid-feedback">
+                Please enter a valid email.
+            </div>
+
+        </div>
+
+
+        <!-- PASSWORD -->
+
+        <div class="mb-4">
+
+            <label
+                for="password"
+                class="form-label"
+            >
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control"
+                placeholder="Create a password"
+                autocomplete="new-password"
+                required
+            >
+
+            <div class="valid-feedback">
+                Looks Good!
+            </div>
+
+            <div class="invalid-feedback">
+                Please enter a password.
+            </div>
+
+        </div>
+
+
+        <!-- SIGN UP -->
+
+        <button
+            type="submit"
+            class="btn signup-btn"
+        >
+            <i class="fa-solid fa-user-plus me-2"></i>
+            Sign Up
+        </button>
+
+
+    </form>
+
+</div>
+```
+
 </div>
