@@ -6,6 +6,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const path = require("path");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const ExpressError = require("./utils/ExpressError");
 
@@ -64,6 +65,13 @@ const sessionOption = {
 
     saveUninitialized: false,
 
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        collectionName: "sessions",
+
+        ttl: 7 * 24 * 60 * 60,
+    }),
+
     cookie: {
         expires: new Date(
             Date.now() + 7 * 24 * 60 * 60 * 1000
@@ -72,6 +80,9 @@ const sessionOption = {
         maxAge: 7 * 24 * 60 * 60 * 1000,
 
         httpOnly: true,
+
+        // Production HTTPS वर true करता येईल
+        secure: false,
     },
 };
 
@@ -106,10 +117,6 @@ app.use((req, res, next) => {
 });
 
 // ================= HOME ROUTE =================
-
-// When user opens:
-// https://staynest-34ll.onrender.com/
-// redirect to listings page
 
 app.get("/", (req, res) => {
     res.redirect("/listings");
