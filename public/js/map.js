@@ -1,6 +1,8 @@
 console.log("Map JS Loaded");
 
-// ================= CHECK VARIABLES =================
+// =========================================================
+// CHECK VARIABLES
+// =========================================================
 
 if (typeof coordinates === "undefined") {
     console.error("Coordinates not found");
@@ -10,11 +12,19 @@ if (typeof mapToken === "undefined") {
     console.error("Map Token not found");
 }
 
-// ================= MAPTILER API KEY =================
+if (typeof listingTitle === "undefined") {
+    console.error("Listing title not found");
+}
+
+// =========================================================
+// MAPTILER API KEY
+// =========================================================
 
 maptilersdk.config.apiKey = mapToken;
 
-// ================= CREATE MAP =================
+// =========================================================
+// CREATE MAP
+// =========================================================
 
 const map = new maptilersdk.Map({
     container: "map",
@@ -23,13 +33,21 @@ const map = new maptilersdk.Map({
     zoom: 10,
 });
 
-// ================= MAP CONTROLS =================
+// =========================================================
+// MAP CONTROLS
+// =========================================================
 
 // Zoom + Compass
-map.addControl(new maptilersdk.NavigationControl(), "top-right");
+map.addControl(
+    new maptilersdk.NavigationControl(),
+    "top-right"
+);
 
 // Fullscreen
-map.addControl(new maptilersdk.FullscreenControl(), "top-right");
+map.addControl(
+    new maptilersdk.FullscreenControl(),
+    "top-right"
+);
 
 // Current Location
 map.addControl(
@@ -42,14 +60,22 @@ map.addControl(
     "top-right"
 );
 
-// ================= MARKER =================
+// =========================================================
+// POPUP
+// =========================================================
 
 const popup = new maptilersdk.Popup({
     offset: 25,
 }).setHTML(`
-    <h5>${listingTitle}</h5>
-    <p>📍 Property Location</p>
+    <div>
+        <h5>${listingTitle}</h5>
+        <p>📍 Property Location</p>
+    </div>
 `);
+
+// =========================================================
+// MARKER
+// =========================================================
 
 const marker = new maptilersdk.Marker({
     color: "red",
@@ -58,7 +84,9 @@ const marker = new maptilersdk.Marker({
     .setPopup(popup)
     .addTo(map);
 
-// ================= CHANGE MAP STYLE =================
+// =========================================================
+// CHANGE MAP STYLE
+// =========================================================
 
 function changeStyle(style) {
 
@@ -91,15 +119,11 @@ function changeStyle(style) {
         default:
             map.setStyle(maptilersdk.MapStyle.HYBRID);
     }
-
 }
 
-// Style बदलल्यावर marker पुन्हा add करा
-map.on("style.load", () => {
-    marker.addTo(map);
-});
-
-// ================= DEBUG =================
+// =========================================================
+// DEBUG
+// =========================================================
 
 console.log("Coordinates:", coordinates);
 console.log("Map Token:", mapToken);
