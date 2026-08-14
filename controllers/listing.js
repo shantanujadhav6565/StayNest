@@ -1,70 +1,110 @@
 const Listing = require("../models/listing");
 const axios = require("axios");
 
+
 // ======================================================
 // INDEX
 // ======================================================
 
 module.exports.index = async (req, res) => {
 
-    const { category } = req.query;
+    try {
 
-    let allListings;
+        const { category } = req.query;
 
-    // ================= CATEGORY FILTER =================
+        let allListings;
 
-    if (category) {
 
-        allListings = await Listing.aggregate([
-            {
-                $match: {
-                    category: category
+        // ==================================================
+        // CATEGORY FILTER
+        // ==================================================
+
+        if (category) {
+
+            allListings = await Listing.aggregate([
+
+                {
+                    $match: {
+                        category: category
+                    }
+                },
+
+                {
+                    $sample: {
+                        size: 100
+                    }
                 }
-            },
-            {
-                $sample: {
-                    size: 100
+
+            ]);
+
+        } else {
+
+            // ==================================================
+            // ALL LISTINGS
+            // ==================================================
+
+            allListings = await Listing.aggregate([
+
+                {
+                    $sample: {
+                        size: 100
+                    }
                 }
+
+            ]);
+
+        }
+
+
+        // ==================================================
+        // CATEGORY MESSAGE
+        // ==================================================
+
+        let categoryMessage = null;
+
+
+        if (
+            category &&
+            allListings.length === 0
+        ) {
+
+            categoryMessage =
+                `No listings found in ${category}.`;
+
+        }
+
+
+        // ==================================================
+        // RENDER
+        // ==================================================
+
+        res.render(
+            "listings/index.ejs",
+            {
+                allListings,
+                searchMessage: null,
+                categoryMessage
             }
-        ]);
+        );
 
-    } else {
+    } catch (err) {
 
-        // ================= ALL LISTINGS =================
+        console.error(
+            "INDEX ERROR:",
+            err
+        );
 
-        allListings = await Listing.aggregate([
-            {
-                $sample: {
-                    size: 100
-                }
-            }
-        ]);
+        req.flash(
+            "error",
+            "Unable to load listings."
+        );
+
+        res.redirect("/listings");
 
     }
-
-    // ================= CATEGORY MESSAGE =================
-
-    let categoryMessage = null;
-
-    if (category && allListings.length === 0) {
-
-        categoryMessage = `No listings found in ${category}.`;
-
-    }
-
-    // ================= RENDER =================
-
-    res.render("listings/index.ejs", {
-
-        allListings,
-
-        searchMessage: null,
-
-        categoryMessage
-
-    });
 
 };
+
 
 
 // ======================================================
@@ -73,9 +113,12 @@ module.exports.index = async (req, res) => {
 
 module.exports.renderNewForm = (req, res) => {
 
-    res.render("listings/new.ejs");
+    res.render(
+        "listings/new.ejs"
+    );
 
 };
+
 
 
 // ======================================================
@@ -84,43 +127,74 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.showListing = async (req, res) => {
 
-    const { id } = req.params;
+    try {
 
-    const listing = await Listing.findById(id)
-        .populate({
-            path: "reviews",
-            populate: {
-                path: "author"
+        const { id } = req.params;
+
+
+        const listing = await Listing.findById(id)
+
+            .populate({
+                path: "reviews",
+
+                populate: {
+                    path: "author"
+                }
+            })
+
+            .populate("owner");
+
+
+        // ==================================================
+        // LISTING NOT FOUND
+        // ==================================================
+
+        if (!listing) {
+
+            req.flash(
+                "error",
+                "Listing you requested does not exist!"
+            );
+
+            return res.redirect(
+                "/listings"
+            );
+
+        }
+
+
+        // ==================================================
+        // SHOW PAGE
+        // ==================================================
+
+        res.render(
+            "listings/show.ejs",
+            {
+                listing,
+                mapToken: process.env.MAP_TOKEN
             }
-        })
-        .populate("owner");
+        );
 
+    } catch (err) {
 
-    // ================= LISTING NOT FOUND =================
-
-    if (!listing) {
+        console.error(
+            "SHOW LISTING ERROR:",
+            err
+        );
 
         req.flash(
             "error",
-            "Listing you requested does not exist!"
+            "Unable to open listing."
         );
 
-        return res.redirect("/listings");
+        res.redirect(
+            "/listings"
+        );
 
     }
 
-
-    // ================= SHOW PAGE =================
-
-    res.render("listings/show.ejs", {
-
-        listing,
-
-        mapToken: process.env.MAP_TOKEN
-
-    });
-
 };
+
 
 
 // ======================================================
@@ -130,6 +204,7 @@ module.exports.showListing = async (req, res) => {
 module.exports.createListing = async (req, res) => {
 
     try {
+
 
         // ==================================================
         // CHECK USER
@@ -142,7 +217,9 @@ module.exports.createListing = async (req, res) => {
                 "You must be logged in first!"
             );
 
-            return res.redirect("/login");
+            return res.redirect(
+                "/login"
+            );
 
         }
 
@@ -158,7 +235,9 @@ module.exports.createListing = async (req, res) => {
                 "Please upload an image for your listing."
             );
 
-            return res.redirect("/listings/new");
+            return res.redirect(
+                "/listings/new"
+            );
 
         }
 
@@ -170,7 +249,7 @@ module.exports.createListing = async (req, res) => {
         if (!process.env.MAP_TOKEN) {
 
             console.error(
-                "MAP_TOKEN is missing from environment variables."
+                "MAP_TOKEN is missing."
             );
 
             req.flash(
@@ -178,7 +257,9 @@ module.exports.createListing = async (req, res) => {
                 "Map service is not configured."
             );
 
-            return res.redirect("/listings/new");
+            return res.redirect(
+                "/listings/new"
+            );
 
         }
 
@@ -203,7 +284,27 @@ module.exports.createListing = async (req, res) => {
                 "Please enter a location."
             );
 
-            return res.redirect("/listings/new");
+            return res.redirect(
+                "/listings/new"
+            );
+
+        }
+
+
+        // ==================================================
+        // CHECK CATEGORY
+        // ==================================================
+
+        if (!newListing.category) {
+
+            req.flash(
+                "error",
+                "Category is required."
+            );
+
+            return res.redirect(
+                "/listings/new"
+            );
 
         }
 
@@ -236,7 +337,9 @@ module.exports.createListing = async (req, res) => {
                 "Location not found. Please enter a valid location."
             );
 
-            return res.redirect("/listings/new");
+            return res.redirect(
+                "/listings/new"
+            );
 
         }
 
@@ -250,7 +353,9 @@ module.exports.createListing = async (req, res) => {
             type: "Point",
 
             coordinates:
-                response.data.features[0].geometry.coordinates
+                response.data.features[0]
+                    .geometry
+                    .coordinates
 
         };
 
@@ -259,7 +364,8 @@ module.exports.createListing = async (req, res) => {
         // SET OWNER
         // ==================================================
 
-        newListing.owner = req.user._id;
+        newListing.owner =
+            req.user._id;
 
 
         // ==================================================
@@ -292,13 +398,12 @@ module.exports.createListing = async (req, res) => {
         );
 
 
-        return res.redirect("/listings");
+        return res.redirect(
+            "/listings"
+        );
+
 
     } catch (err) {
-
-        // ==================================================
-        // ERROR LOG
-        // ==================================================
 
         console.error(
             "======================================"
@@ -320,11 +425,15 @@ module.exports.createListing = async (req, res) => {
             "Unable to create listing. Please try again."
         );
 
-        return res.redirect("/listings/new");
+
+        return res.redirect(
+            "/listings/new"
+        );
 
     }
 
 };
+
 
 
 // ======================================================
@@ -333,35 +442,64 @@ module.exports.createListing = async (req, res) => {
 
 module.exports.renderEditForm = async (req, res) => {
 
-    const { id } = req.params;
+    try {
 
-    const listing = await Listing.findById(id);
+        const { id } = req.params;
 
 
-    // ================= NOT FOUND =================
+        const listing =
+            await Listing.findById(id);
 
-    if (!listing) {
+
+        // ==================================================
+        // NOT FOUND
+        // ==================================================
+
+        if (!listing) {
+
+            req.flash(
+                "error",
+                "Listing you requested does not exist!"
+            );
+
+            return res.redirect(
+                "/listings"
+            );
+
+        }
+
+
+        // ==================================================
+        // RENDER EDIT
+        // ==================================================
+
+        res.render(
+            "listings/edit.ejs",
+            {
+                listing
+            }
+        );
+
+    } catch (err) {
+
+        console.error(
+            "EDIT FORM ERROR:",
+            err
+        );
 
         req.flash(
             "error",
-            "Listing you requested does not exist!"
+            "Unable to open edit page."
         );
 
-        return res.redirect("/listings");
+        res.redirect(
+            "/listings"
+        );
 
     }
 
-
-    // ================= RENDER =================
-
-    res.render(
-        "listings/edit.ejs",
-        {
-            listing
-        }
-    );
-
 };
+
 
 
 // ======================================================
@@ -372,9 +510,12 @@ module.exports.updateListing = async (req, res) => {
 
     try {
 
-        const { id } = req.params;
+        const { id } =
+            req.params;
 
-        const listing = await Listing.findById(id);
+
+        const listing =
+            await Listing.findById(id);
 
 
         // ==================================================
@@ -388,7 +529,51 @@ module.exports.updateListing = async (req, res) => {
                 "Listing does not exist!"
             );
 
-            return res.redirect("/listings");
+            return res.redirect(
+                "/listings"
+            );
+
+        }
+
+
+        // ==================================================
+        // CHECK REQUEST BODY
+        // ==================================================
+
+        if (
+            !req.body ||
+            !req.body.listing
+        ) {
+
+            req.flash(
+                "error",
+                "No listing data received."
+            );
+
+            return res.redirect(
+                `/listings/${id}/edit`
+            );
+
+        }
+
+
+        // ==================================================
+        // CHECK CATEGORY
+        // ==================================================
+
+        if (
+            !req.body.listing.category ||
+            req.body.listing.category.trim() === ""
+        ) {
+
+            req.flash(
+                "error",
+                "Category is required."
+            );
+
+            return res.redirect(
+                `/listings/${id}/edit`
+            );
 
         }
 
@@ -412,13 +597,14 @@ module.exports.updateListing = async (req, res) => {
             process.env.MAP_TOKEN
         ) {
 
-            const response = await axios.get(
+            const response =
+                await axios.get(
 
-                `https://api.maptiler.com/geocoding/${encodeURIComponent(
-                    listing.location
-                )}.json?key=${process.env.MAP_TOKEN}`
+                    `https://api.maptiler.com/geocoding/${encodeURIComponent(
+                        listing.location
+                    )}.json?key=${process.env.MAP_TOKEN}`
 
-            );
+                );
 
 
             // ==================================================
@@ -436,7 +622,10 @@ module.exports.updateListing = async (req, res) => {
                     type: "Point",
 
                     coordinates:
-                        response.data.features[0].geometry.coordinates
+                        response.data
+                            .features[0]
+                            .geometry
+                            .coordinates
 
                 };
 
@@ -483,17 +672,29 @@ module.exports.updateListing = async (req, res) => {
             `/listings/${id}`
         );
 
+
     } catch (err) {
 
         console.error(
-            "UPDATE LISTING ERROR:",
-            err
+            "======================================"
         );
+
+        console.error(
+            "UPDATE LISTING ERROR:"
+        );
+
+        console.error(err);
+
+        console.error(
+            "======================================"
+        );
+
 
         req.flash(
             "error",
             "Unable to update listing."
         );
+
 
         return res.redirect(
             `/listings/${req.params.id}/edit`
@@ -504,6 +705,7 @@ module.exports.updateListing = async (req, res) => {
 };
 
 
+
 // ======================================================
 // DELETE LISTING
 // ======================================================
@@ -512,15 +714,44 @@ module.exports.deleteListing = async (req, res) => {
 
     try {
 
-        const { id } = req.params;
+        const { id } =
+            req.params;
 
 
-        // ================= DELETE =================
+        // ==================================================
+        // CHECK LISTING
+        // ==================================================
 
-        await Listing.findByIdAndDelete(id);
+        const listing =
+            await Listing.findById(id);
 
 
-        // ================= SUCCESS =================
+        if (!listing) {
+
+            req.flash(
+                "error",
+                "Listing does not exist!"
+            );
+
+            return res.redirect(
+                "/listings"
+            );
+
+        }
+
+
+        // ==================================================
+        // DELETE
+        // ==================================================
+
+        await Listing.findByIdAndDelete(
+            id
+        );
+
+
+        // ==================================================
+        // SUCCESS
+        // ==================================================
 
         req.flash(
             "success",
@@ -528,7 +759,10 @@ module.exports.deleteListing = async (req, res) => {
         );
 
 
-        return res.redirect("/listings");
+        return res.redirect(
+            "/listings"
+        );
+
 
     } catch (err) {
 
@@ -537,12 +771,16 @@ module.exports.deleteListing = async (req, res) => {
             err
         );
 
+
         req.flash(
             "error",
             "Unable to delete listing."
         );
 
-        return res.redirect("/listings");
+
+        return res.redirect(
+            "/listings"
+        );
 
     }
 

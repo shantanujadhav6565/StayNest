@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 // =====================================================
-// LISTING VALIDATION
+// LISTING CREATE VALIDATION
 // =====================================================
 
 module.exports.listingSchema = Joi.object({
@@ -82,6 +82,96 @@ module.exports.listingSchema = Joi.object({
             .messages({
                 "any.only": "Please select a valid category",
                 "any.required": "Category is required"
+            }),
+
+
+        // ================= IMAGE =================
+
+        image: Joi.object({
+
+            url: Joi.string()
+                .allow("", null),
+
+            filename: Joi.string()
+                .allow("", null)
+
+        }).allow(null, "")
+
+    }).required()
+
+});
+
+
+// =====================================================
+// LISTING UPDATE VALIDATION
+// =====================================================
+
+module.exports.listingUpdateSchema = Joi.object({
+
+    listing: Joi.object({
+
+        // ================= TITLE =================
+
+        title: Joi.string()
+            .trim()
+            .messages({
+                "string.empty": "Title cannot be empty"
+            }),
+
+
+        // ================= DESCRIPTION =================
+
+        description: Joi.string()
+            .trim()
+            .messages({
+                "string.empty": "Description cannot be empty"
+            }),
+
+
+        // ================= PRICE =================
+
+        price: Joi.number()
+            .min(0)
+            .messages({
+                "number.base": "Price must be a number",
+                "number.min": "Price cannot be negative"
+            }),
+
+
+        // ================= LOCATION =================
+
+        location: Joi.string()
+            .trim()
+            .messages({
+                "string.empty": "Location cannot be empty"
+            }),
+
+
+        // ================= COUNTRY =================
+
+        country: Joi.string()
+            .trim()
+            .messages({
+                "string.empty": "Country cannot be empty"
+            }),
+
+
+        // ================= CATEGORY =================
+
+        category: Joi.string()
+            .valid(
+                "Trending",
+                "Rooms",
+                "Iconic Cities",
+                "Mountains",
+                "Castles",
+                "Amazing Pool",
+                "Camping",
+                "Farms",
+                "Arctic"
+            )
+            .messages({
+                "any.only": "Please select a valid category"
             }),
 
 
