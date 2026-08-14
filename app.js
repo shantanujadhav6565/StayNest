@@ -20,140 +20,342 @@ const userRouter = require("./routes/user");
 
 const app = express();
 
-// ================= PORT =================
+
+// ======================================================
+// PORT
+// ======================================================
 
 const port = process.env.PORT || 8080;
 
-// ================= DATABASE =================
+
+// ======================================================
+// DATABASE
+// ======================================================
 
 async function main() {
+
     try {
+
         await mongoose.connect(process.env.MONGO_URI);
 
+        console.log("=================================");
         console.log("Database Connected");
         console.log(
             "Database Name:",
             mongoose.connection.db.databaseName
         );
+        console.log("=================================");
+
     } catch (err) {
-        console.log("Database Connection Error:", err);
+
+        console.error("=================================");
+        console.error("DATABASE CONNECTION ERROR:");
+        console.error(err);
+        console.error("=================================");
+
     }
+
 }
 
 main();
 
-// ================= EJS =================
+
+// ======================================================
+// EJS
+// ======================================================
 
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-app.engine("ejs", ejsMate);
 
-// ================= MIDDLEWARE =================
+app.set(
+    "views",
+    path.join(__dirname, "views")
+);
 
-app.use(express.urlencoded({ extended: true }));
+app.engine(
+    "ejs",
+    ejsMate
+);
 
-app.use(methodOverride("_method"));
 
-app.use(express.static(path.join(__dirname, "public")));
+// ======================================================
+// MIDDLEWARE
+// ======================================================
 
-// ================= SESSION =================
+app.use(
+    express.urlencoded({
+        extended: true
+    })
+);
+
+app.use(
+    methodOverride("_method")
+);
+
+app.use(
+    express.static(
+        path.join(__dirname, "public")
+    )
+);
+
+
+// ======================================================
+// SESSION
+// ======================================================
 
 const sessionOption = {
-    secret: process.env.SESSION_SECRET || "fallbacksecret",
+
+    secret:
+        process.env.SESSION_SECRET ||
+        "fallbacksecret",
 
     resave: false,
 
     saveUninitialized: false,
 
     store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URI,
-        collectionName: "sessions",
 
-        ttl: 7 * 24 * 60 * 60,
+        mongoUrl:
+            process.env.MONGO_URI,
+
+        collectionName:
+            "sessions",
+
+        ttl:
+            7 * 24 * 60 * 60
+
     }),
 
     cookie: {
-        expires: new Date(
-            Date.now() + 7 * 24 * 60 * 60 * 1000
-        ),
 
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        expires:
+            new Date(
+                Date.now() +
+                7 * 24 * 60 * 60 * 1000
+            ),
+
+        maxAge:
+            7 * 24 * 60 * 60 * 1000,
 
         httpOnly: true,
 
-        // Production HTTPS वर true करता येईल
-        secure: false,
-    },
+        secure: false
+
+    }
+
 };
 
-app.use(session(sessionOption));
+app.use(
+    session(sessionOption)
+);
+
+
+// ======================================================
+// FLASH
+// ======================================================
 
 app.use(flash());
 
-// ================= PASSPORT =================
 
-app.use(passport.initialize());
+// ======================================================
+// PASSPORT
+// ======================================================
 
-app.use(passport.session());
+app.use(
+    passport.initialize()
+);
 
-passport.use(new LocalStrategy(User.authenticate()));
+app.use(
+    passport.session()
+);
 
-passport.serializeUser(User.serializeUser());
+passport.use(
+    new LocalStrategy(
+        User.authenticate()
+    )
+);
 
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(
+    User.serializeUser()
+);
 
-// ================= GLOBAL VARIABLES =================
+passport.deserializeUser(
+    User.deserializeUser()
+);
 
-app.use((req, res, next) => {
-    res.locals.success = req.flash("success");
 
-    res.locals.error = req.flash("error");
+// ======================================================
+// GLOBAL VARIABLES
+// ======================================================
 
-    res.locals.currUser = req.user;
+app.use(
+    (req, res, next) => {
 
-    res.locals.mapToken = process.env.MAP_TOKEN;
+        res.locals.success =
+            req.flash("success");
 
-    next();
-});
+        res.locals.error =
+            req.flash("error");
 
-// ================= HOME ROUTE =================
+        res.locals.currUser =
+            req.user;
 
-app.get("/", (req, res) => {
-    res.redirect("/listings");
-});
+        res.locals.mapToken =
+            process.env.MAP_TOKEN;
 
-// ================= ROUTES =================
+        next();
+
+    }
+);
+
+
+// ======================================================
+// HOME ROUTE
+// ======================================================
+
+app.get(
+    "/",
+    (req, res) => {
+
+        res.redirect(
+            "/listings"
+        );
+
+    }
+);
+
+
+// ======================================================
+// ROUTES
+// ======================================================
 
 // Listings
-app.use("/listings", listingRouter);
+
+app.use(
+    "/listings",
+    listingRouter
+);
+
 
 // Reviews
-app.use("/listings/:id/reviews", reviewRouter);
+
+app.use(
+    "/listings/:id/reviews",
+    reviewRouter
+);
+
 
 // Users
-app.use("/", userRouter);
 
-// ================= 404 ERROR =================
+app.use(
+    "/",
+    userRouter
+);
 
-app.all("*", (req, res, next) => {
-    next(new ExpressError(404, "Page Not Found"));
-});
 
-// ================= ERROR HANDLER =================
+// ======================================================
+// 404 ERROR
+// ======================================================
 
-app.use((err, req, res, next) => {
-    let {
-        statusCode = 500,
-        message = "Something Went Wrong!",
-    } = err;
+app.all(
+    "*",
+    (req, res, next) => {
 
-    res.status(statusCode).render("error.ejs", {
-        message,
-    });
-});
+        next(
+            new ExpressError(
+                404,
+                "Page Not Found"
+            )
+        );
 
-// ================= SERVER =================
+    }
+);
 
-app.listen(port, () => {
-    console.log(`Server Started on Port ${port}`);
-});
+
+// ======================================================
+// GLOBAL ERROR HANDLER
+// ======================================================
+
+app.use(
+    (err, req, res, next) => {
+
+        console.error("");
+        console.error(
+            "========================================"
+        );
+
+        console.error(
+            "GLOBAL ERROR"
+        );
+
+        console.error(
+            "========================================"
+        );
+
+        console.error(
+            "URL:",
+            req.originalUrl
+        );
+
+        console.error(
+            "METHOD:",
+            req.method
+        );
+
+        console.error(
+            "STATUS:",
+            err.statusCode || 500
+        );
+
+        console.error(
+            "MESSAGE:",
+            err.message
+        );
+
+        console.error(
+            "FULL ERROR:"
+        );
+
+        console.error(err);
+
+        console.error(
+            "========================================"
+        );
+
+        console.error("");
+
+
+        const statusCode =
+            err.statusCode || 500;
+
+        const message =
+            err.message ||
+            "Something Went Wrong!";
+
+
+        // ================= RENDER ERROR PAGE =================
+
+        res.status(statusCode).render(
+            "error.ejs",
+            {
+                message
+            }
+        );
+
+    }
+);
+
+
+// ======================================================
+// SERVER
+// ======================================================
+
+app.listen(
+    port,
+    () => {
+
+        console.log(
+            `Server Started on Port ${port}`
+        );
+
+    }
+);

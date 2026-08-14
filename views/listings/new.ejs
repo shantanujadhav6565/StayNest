@@ -1,6 +1,6 @@
 <% layout("layouts/boilerplate") -%>
 
-<div class="row mt-4">
+<div class="row mt-4 mb-5">
     <div class="col-lg-8 offset-lg-2">
 
         <h3 class="mb-4">Create New Listing</h3>
@@ -74,7 +74,17 @@
                     name="listing[image]"
                     class="form-control"
                     id="image"
+                    accept="image/*"
+                    required
                 >
+
+                <div class="form-text">
+                    Please upload an image for your listing.
+                </div>
+
+                <div class="invalid-feedback">
+                    Please upload a listing image.
+                </div>
 
             </div>
 
@@ -102,7 +112,7 @@
                     >
 
                     <div class="invalid-feedback">
-                        Enter valid price.
+                        Enter a valid price.
                     </div>
 
                 </div>
@@ -224,14 +234,54 @@
 
             <!-- ================= SUBMIT ================= -->
 
-            <button
-                type="submit"
-                class="btn btn-dark add-btn"
-            >
-                Add Listing
-            </button>
+            <div class="d-flex justify-content-end">
+
+                <button
+                    type="submit"
+                    class="btn btn-dark add-btn"
+                >
+                    Add Listing
+                </button>
+
+            </div>
 
         </form>
 
     </div>
 </div>
+
+
+<!-- ================= FORM VALIDATION ================= -->
+
+<script>
+
+    (() => {
+
+        "use strict";
+
+        const forms = document.querySelectorAll(".needs-validation");
+
+        Array.from(forms).forEach(form => {
+
+            form.addEventListener(
+                "submit",
+                event => {
+
+                    if (!form.checkValidity()) {
+
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                    }
+
+                    form.classList.add("was-validated");
+
+                },
+                false
+            );
+
+        });
+
+    })();
+
+</script>

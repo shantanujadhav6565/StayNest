@@ -1,7 +1,9 @@
 const Listing = require("../models/listing");
 const axios = require("axios");
 
-// ================= INDEX =================
+// ======================================================
+// INDEX
+// ======================================================
 
 module.exports.index = async (req, res) => {
 
@@ -13,7 +15,6 @@ module.exports.index = async (req, res) => {
 
     if (category) {
 
-        // Filtered listings + RANDOM ORDER
         allListings = await Listing.aggregate([
             {
                 $match: {
@@ -29,7 +30,8 @@ module.exports.index = async (req, res) => {
 
     } else {
 
-        // All listings + RANDOM ORDER
+        // ================= ALL LISTINGS =================
+
         allListings = await Listing.aggregate([
             {
                 $sample: {
@@ -50,16 +52,14 @@ module.exports.index = async (req, res) => {
 
     }
 
-    // ================= RENDER INDEX =================
+    // ================= RENDER =================
 
     res.render("listings/index.ejs", {
 
         allListings,
 
-        // Search message default
         searchMessage: null,
 
-        // Category message
         categoryMessage
 
     });
@@ -67,7 +67,9 @@ module.exports.index = async (req, res) => {
 };
 
 
-// ================= RENDER NEW FORM =================
+// ======================================================
+// RENDER NEW FORM
+// ======================================================
 
 module.exports.renderNewForm = (req, res) => {
 
@@ -76,7 +78,9 @@ module.exports.renderNewForm = (req, res) => {
 };
 
 
-// ================= SHOW LISTING =================
+// ======================================================
+// SHOW LISTING
+// ======================================================
 
 module.exports.showListing = async (req, res) => {
 
@@ -86,8 +90,8 @@ module.exports.showListing = async (req, res) => {
         .populate({
             path: "reviews",
             populate: {
-                path: "author",
-            },
+                path: "author"
+            }
         })
         .populate("owner");
 
@@ -112,7 +116,6 @@ module.exports.showListing = async (req, res) => {
 
         listing,
 
-        // MapTiler API Key
         mapToken: process.env.MAP_TOKEN
 
     });
@@ -120,104 +123,222 @@ module.exports.showListing = async (req, res) => {
 };
 
 
-// ================= CREATE LISTING =================
+// ======================================================
+// CREATE LISTING
+// ======================================================
 
 module.exports.createListing = async (req, res) => {
 
-    // ================= IMAGE =================
+    try {
 
-    let url = req.file.path;
+        // ==================================================
+        // CHECK USER
+        // ==================================================
 
-    let filename = req.file.filename;
+        if (!req.user) {
 
+            req.flash(
+                "error",
+                "You must be logged in first!"
+            );
 
-    // ================= CREATE LISTING =================
+            return res.redirect("/login");
 
-    const newListing = new Listing(req.body.listing);
-
-
-    // ================= GET COORDINATES FROM MAPTILER =================
-
-    const response = await axios.get(
-
-        `https://api.maptiler.com/geocoding/${encodeURIComponent(
-            newListing.location
-        )}.json?key=${process.env.MAP_TOKEN}`
-
-    );
+        }
 
 
-    // ================= LOCATION NOT FOUND =================
+        // ==================================================
+        // CHECK IMAGE
+        // ==================================================
 
-    if (!response.data.features.length) {
+        if (!req.file) {
+
+            req.flash(
+                "error",
+                "Please upload an image for your listing."
+            );
+
+            return res.redirect("/listings/new");
+
+        }
+
+
+        // ==================================================
+        // CHECK MAP TOKEN
+        // ==================================================
+
+        if (!process.env.MAP_TOKEN) {
+
+            console.error(
+                "MAP_TOKEN is missing from environment variables."
+            );
+
+            req.flash(
+                "error",
+                "Map service is not configured."
+            );
+
+            return res.redirect("/listings/new");
+
+        }
+
+
+        // ==================================================
+        // CREATE LISTING OBJECT
+        // ==================================================
+
+        const newListing = new Listing(
+            req.body.listing
+        );
+
+
+        // ==================================================
+        // CHECK LOCATION
+        // ==================================================
+
+        if (!newListing.location) {
+
+            req.flash(
+                "error",
+                "Please enter a location."
+            );
+
+            return res.redirect("/listings/new");
+
+        }
+
+
+        // ==================================================
+        // MAPTILER GEOCODING
+        // ==================================================
+
+        const response = await axios.get(
+
+            `https://api.maptiler.com/geocoding/${encodeURIComponent(
+                newListing.location
+            )}.json?key=${process.env.MAP_TOKEN}`
+
+        );
+
+
+        // ==================================================
+        // CHECK MAPTILER RESPONSE
+        // ==================================================
+
+        if (
+            !response.data ||
+            !response.data.features ||
+            response.data.features.length === 0
+        ) {
+
+            req.flash(
+                "error",
+                "Location not found. Please enter a valid location."
+            );
+
+            return res.redirect("/listings/new");
+
+        }
+
+
+        // ==================================================
+        // SET GEOMETRY
+        // ==================================================
+
+        newListing.geometry = {
+
+            type: "Point",
+
+            coordinates:
+                response.data.features[0].geometry.coordinates
+
+        };
+
+
+        // ==================================================
+        // SET OWNER
+        // ==================================================
+
+        newListing.owner = req.user._id;
+
+
+        // ==================================================
+        // SET IMAGE
+        // ==================================================
+
+        newListing.image = {
+
+            url: req.file.path,
+
+            filename: req.file.filename
+
+        };
+
+
+        // ==================================================
+        // SAVE LISTING
+        // ==================================================
+
+        await newListing.save();
+
+
+        // ==================================================
+        // SUCCESS
+        // ==================================================
+
+        req.flash(
+            "success",
+            "New Listing Created Successfully!"
+        );
+
+
+        return res.redirect("/listings");
+
+    } catch (err) {
+
+        // ==================================================
+        // ERROR LOG
+        // ==================================================
+
+        console.error(
+            "======================================"
+        );
+
+        console.error(
+            "CREATE LISTING ERROR:"
+        );
+
+        console.error(err);
+
+        console.error(
+            "======================================"
+        );
+
 
         req.flash(
             "error",
-            "Location not found!"
+            "Unable to create listing. Please try again."
         );
 
         return res.redirect("/listings/new");
 
     }
 
-
-    // ================= GEOMETRY =================
-
-    newListing.geometry = {
-
-        type: "Point",
-
-        coordinates:
-            response.data.features[0].geometry.coordinates
-
-    };
-
-
-    // ================= OWNER =================
-
-    newListing.owner = req.user._id;
-
-
-    // ================= IMAGE =================
-
-    newListing.image = {
-
-        url,
-
-        filename
-
-    };
-
-
-    // ================= SAVE =================
-
-    await newListing.save();
-
-
-    // ================= SUCCESS MESSAGE =================
-
-    req.flash(
-        "success",
-        "New Listing Created Successfully!"
-    );
-
-
-    res.redirect("/listings");
-
 };
 
 
-// ================= RENDER EDIT FORM =================
+// ======================================================
+// RENDER EDIT FORM
+// ======================================================
 
 module.exports.renderEditForm = async (req, res) => {
 
     const { id } = req.params;
 
-
     const listing = await Listing.findById(id);
 
 
-    // ================= LISTING NOT FOUND =================
+    // ================= NOT FOUND =================
 
     if (!listing) {
 
@@ -231,7 +352,7 @@ module.exports.renderEditForm = async (req, res) => {
     }
 
 
-    // ================= EDIT PAGE =================
+    // ================= RENDER =================
 
     res.render(
         "listings/edit.ejs",
@@ -243,118 +364,186 @@ module.exports.renderEditForm = async (req, res) => {
 };
 
 
-// ================= UPDATE LISTING =================
+// ======================================================
+// UPDATE LISTING
+// ======================================================
 
 module.exports.updateListing = async (req, res) => {
 
-    const { id } = req.params;
+    try {
+
+        const { id } = req.params;
+
+        const listing = await Listing.findById(id);
 
 
-    let listing = await Listing.findById(id);
+        // ==================================================
+        // LISTING NOT FOUND
+        // ==================================================
+
+        if (!listing) {
+
+            req.flash(
+                "error",
+                "Listing does not exist!"
+            );
+
+            return res.redirect("/listings");
+
+        }
 
 
-    // ================= LISTING NOT FOUND =================
+        // ==================================================
+        // UPDATE BASIC FIELDS
+        // ==================================================
 
-    if (!listing) {
+        Object.assign(
+            listing,
+            req.body.listing
+        );
+
+
+        // ==================================================
+        // UPDATE LOCATION
+        // ==================================================
+
+        if (
+            listing.location &&
+            process.env.MAP_TOKEN
+        ) {
+
+            const response = await axios.get(
+
+                `https://api.maptiler.com/geocoding/${encodeURIComponent(
+                    listing.location
+                )}.json?key=${process.env.MAP_TOKEN}`
+
+            );
+
+
+            // ==================================================
+            // UPDATE GEOMETRY
+            // ==================================================
+
+            if (
+                response.data &&
+                response.data.features &&
+                response.data.features.length > 0
+            ) {
+
+                listing.geometry = {
+
+                    type: "Point",
+
+                    coordinates:
+                        response.data.features[0].geometry.coordinates
+
+                };
+
+            }
+
+        }
+
+
+        // ==================================================
+        // UPDATE IMAGE
+        // ==================================================
+
+        if (req.file) {
+
+            listing.image = {
+
+                url: req.file.path,
+
+                filename: req.file.filename
+
+            };
+
+        }
+
+
+        // ==================================================
+        // SAVE
+        // ==================================================
+
+        await listing.save();
+
+
+        // ==================================================
+        // SUCCESS
+        // ==================================================
+
+        req.flash(
+            "success",
+            "Listing Updated Successfully!"
+        );
+
+
+        return res.redirect(
+            `/listings/${id}`
+        );
+
+    } catch (err) {
+
+        console.error(
+            "UPDATE LISTING ERROR:",
+            err
+        );
 
         req.flash(
             "error",
-            "Listing does not exist!"
+            "Unable to update listing."
+        );
+
+        return res.redirect(
+            `/listings/${req.params.id}/edit`
+        );
+
+    }
+
+};
+
+
+// ======================================================
+// DELETE LISTING
+// ======================================================
+
+module.exports.deleteListing = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+
+        // ================= DELETE =================
+
+        await Listing.findByIdAndDelete(id);
+
+
+        // ================= SUCCESS =================
+
+        req.flash(
+            "success",
+            "Listing Deleted Successfully!"
+        );
+
+
+        return res.redirect("/listings");
+
+    } catch (err) {
+
+        console.error(
+            "DELETE LISTING ERROR:",
+            err
+        );
+
+        req.flash(
+            "error",
+            "Unable to delete listing."
         );
 
         return res.redirect("/listings");
 
     }
-
-
-    // ================= UPDATE FIELDS =================
-
-    Object.assign(
-        listing,
-        req.body.listing
-    );
-
-
-    // ================= UPDATE COORDINATES =================
-
-    const response = await axios.get(
-
-        `https://api.maptiler.com/geocoding/${encodeURIComponent(
-            listing.location
-        )}.json?key=${process.env.MAP_TOKEN}`
-
-    );
-
-
-    // ================= UPDATE GEOMETRY =================
-
-    if (response.data.features.length) {
-
-        listing.geometry = {
-
-            type: "Point",
-
-            coordinates:
-                response.data.features[0].geometry.coordinates
-
-        };
-
-    }
-
-
-    // ================= UPDATE IMAGE =================
-
-    if (req.file) {
-
-        listing.image = {
-
-            url: req.file.path,
-
-            filename: req.file.filename
-
-        };
-
-    }
-
-
-    // ================= SAVE UPDATED LISTING =================
-
-    await listing.save();
-
-
-    // ================= SUCCESS MESSAGE =================
-
-    req.flash(
-        "success",
-        "Listing Updated Successfully!"
-    );
-
-
-    res.redirect(`/listings/${id}`);
-
-};
-
-
-// ================= DELETE LISTING =================
-
-module.exports.deleteListing = async (req, res) => {
-
-    const { id } = req.params;
-
-
-    // ================= DELETE =================
-
-    await Listing.findByIdAndDelete(id);
-
-
-    // ================= SUCCESS MESSAGE =================
-
-    req.flash(
-        "success",
-        "Listing Deleted Successfully!"
-    );
-
-
-    res.redirect("/listings");
 
 };
